@@ -1,0 +1,16 @@
+/.vscode/
+/.idea/
+*.swp
+*.swo
+*~
+
+/logs/app.log
+
+/.env
+
+/vendor/
+
+public/img/users/**
+!public/img/users/default.png
+
+/googleauthcredentials.json
