@@ -16,7 +16,7 @@ class Router {
         $this->user = new Auth();
     }
 
-    public function create(string $method, string $path, callable $callback, Auth $auth = null){
+    public function create(string $method, string $path, callable $callback, ?Auth $auth){
         $normalizedPath = $this->normalizePath($path);
 
         $this->routers[$method][$normalizedPath] = [

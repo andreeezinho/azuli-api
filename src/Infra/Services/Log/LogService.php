@@ -24,7 +24,7 @@ class LogService {
 
             if(!file_exists($logPath)){
                 touch($logPath);
-                chmod($logPath, 0666);
+                chmod($logPath, 0775);
             }
 
             if(is_writable($logPath) || is_writeable($dir)){

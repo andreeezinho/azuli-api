@@ -21,6 +21,10 @@ class Auth {
     public function check(){
         $token = $this->request->getHeaders('Authorization');
 
+        if(is_null($token)){
+            return false;
+        }
+
         $validate = JWT::validateToken($token);
 
         if(is_null($validate)){

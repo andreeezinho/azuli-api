@@ -20,6 +20,7 @@ class User {
     public ?string $senha;
     // public string $funcao;
     public int $ativo;
+    public string $cargo;
     public int $is_admin;
     public ?string $icone;
     public ?string $created_at;

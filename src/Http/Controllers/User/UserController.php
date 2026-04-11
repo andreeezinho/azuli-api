@@ -131,7 +131,7 @@ class UserController extends Controller {
             ], 422);
         }
 
-        $update = $this->userRepository->updateSenha($data, $user->id);
+        $update = $this->userRepository->update($data, $user->id);
 
         if(is_null($update)){
             return $this->respJson([
@@ -174,7 +174,7 @@ class UserController extends Controller {
             ], 500);
         }
 
-        $update = $this->userRepository->updateIcone(['icone' => $saveIcon['hash_name']], $user->id);
+        $update = $this->userRepository->update(['icone' => $saveIcon['hash_name']], $user->id);
 
         if(is_null($update)){
             return $this->respJson([
