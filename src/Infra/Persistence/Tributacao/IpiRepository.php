@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infra\Persistence\Ipi;
+namespace App\Infra\Persistence\Tributacao;
 
 use App\Domain\Models\Tributacao\Ipi;
 use App\Domain\Repositories\Tributacao\IpiRepositoryInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infra\Persistence\Pis;
+namespace App\Infra\Persistence\Tributacao;
 
 use App\Domain\Models\Tributacao\Pis;
 use App\Domain\Repositories\Tributacao\PisRepositoryInterface;

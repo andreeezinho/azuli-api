@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infra\Persistence\Cofins;
+namespace App\Infra\Persistence\Tributacao;
 
 use App\Domain\Models\Tributacao\Cofins;
 use App\Domain\Repositories\Tributacao\CofinsRepositoryInterface;

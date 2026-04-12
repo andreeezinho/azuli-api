@@ -8,6 +8,7 @@ use App\Config\DependencyProvider;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\RecuperarSenha\RecuperarSenhaController;
+use App\Http\Controllers\Tributacao\TributacaoController;
 
 $router = new Router();
 $auth = new Auth();
@@ -18,6 +19,7 @@ $dependencyProvider->register();
 $authController = $container->get(AuthController::class);
 $userController = $container->get(UserController::class);
 $recuperarSenhaController = $container->get(RecuperarSenhaController::class);
+$tributacaoController = $container->get(TributacaoController::class);
 
 // - Rotas
 
@@ -38,5 +40,11 @@ $router->create("DELETE", "/usuarios/{uuid}", [$userController, 'destroy'], $aut
 //recuperar-senha   
 $router->create("POST", "/recuperar-senha/enviar-codigo", [$recuperarSenhaController, 'sendVerificationCode'], null);
 $router->create("PUT", "/recuperar-senha", [$recuperarSenhaController, 'changePassword'], null);
+
+//tributacoes
+$router->create("GET", "/tributacoes", [$tributacaoController, 'index'], $auth);
+$router->create("POST", "/tributacoes", [$tributacaoController, 'store'], $auth);
+$router->create("PUT", "/tributacoes/{uuid}", [$tributacaoController, 'update'], $auth);
+$router->create("DELETE", "/tributacoes/{uuid}", [$tributacaoController, 'destroy'], $auth);
 
 return $router;

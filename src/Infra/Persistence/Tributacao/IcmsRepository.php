@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infra\Persistence\Icms;
+namespace App\Infra\Persistence\Tributacao;
 
 use App\Domain\Models\Tributacao\Icms;
 use App\Domain\Repositories\Tributacao\IcmsRepositoryInterface;

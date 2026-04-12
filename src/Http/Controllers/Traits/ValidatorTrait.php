@@ -108,7 +108,7 @@ trait ValidatorTrait {
 
     protected function float($field){
         if (!filter_var($this->data[$field], FILTER_VALIDATE_FLOAT)) {
-            $this->errors[$field][] = "O campo $field deve ser um número inteiro.";
+            $this->errors[$field][] = "O campo $field deve ser um número float.";
             return;
         }
     }
