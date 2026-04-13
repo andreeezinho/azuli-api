@@ -11,6 +11,7 @@ use App\Http\Controllers\RecuperarSenha\RecuperarSenhaController;
 use App\Http\Controllers\Tributacao\TributacaoController;
 use App\Http\Controllers\GrupoProduto\GrupoProdutoController;
 use App\Http\Controllers\Produto\ProdutoController;
+use App\Http\Controllers\Pdv\PdvController;
 
 $router = new Router();
 $auth = new Auth();
@@ -24,6 +25,7 @@ $recuperarSenhaController = $container->get(RecuperarSenhaController::class);
 $tributacaoController = $container->get(TributacaoController::class);
 $grupoProdutoController = $container->get(GrupoProdutoController::class);
 $produtoController = $container->get(ProdutoController::class);
+$pdvController = $container->get(PdvController::class);
 
 // - Rotas
 
@@ -62,5 +64,9 @@ $router->create("GET", "/produtos", [$produtoController, 'index'], $auth);
 $router->create("POST", "/produtos", [$produtoController, 'store'], $auth);
 $router->create("PUT", "/produtos", [$produtoController, 'update'], $auth);
 $router->create("DELETE", "/produtos", [$produtoController, 'destroy'], $auth);
+
+//PDV
+$router->create("GET", "/pdv", [$pdvController, 'index'], null);
+
 
 return $router;
