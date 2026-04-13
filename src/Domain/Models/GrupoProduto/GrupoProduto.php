@@ -20,7 +20,7 @@ class GrupoProduto {
     public function create(array $data) : GrupoProduto {
         $grupoProduto = new GrupoProduto();
         $grupoProduto->setFields($data);
-        $grupoProduto->uuid = $data['uuid'];
+        $grupoProduto->uuid = $data['uuid'] ?? $this->generateUUID();
         return $grupoProduto;
     }
 

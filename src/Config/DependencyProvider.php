@@ -6,6 +6,8 @@ use App\Domain\Repositories\User\UserRepositoryInterface;
 use App\Infra\Persistence\User\UserRepository;
 use App\Domain\Repositories\RecuperarSenha\RecuperarSenhaRepositoryInterface;
 use App\Infra\Persistence\RecuperarSenha\RecuperarSenhaRepository;
+use App\Domain\Repositories\GrupoProduto\GrupoProdutoRepositoryInterface;
+use App\Infra\Persistence\GrupoProduto\GrupoProdutoRepository;
 use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
 use App\Infra\Persistence\Produto\ProdutoRepository;
 
@@ -39,6 +41,12 @@ class DependencyProvider {
             ->set(
                 RecuperarSenhaRepositoryInterface::class,
                 new RecuperarSenhaRepository()
+            );
+
+        $this->container
+            ->set(
+                GrupoProdutoRepositoryInterface::class,
+                new GrupoProdutoRepository()
             );
 
         $this->container

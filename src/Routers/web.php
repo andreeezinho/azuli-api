@@ -9,6 +9,8 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\RecuperarSenha\RecuperarSenhaController;
 use App\Http\Controllers\Tributacao\TributacaoController;
+use App\Http\Controllers\GrupoProduto\GrupoProdutoController;
+use App\Http\Controllers\Produto\ProdutoController;
 
 $router = new Router();
 $auth = new Auth();
@@ -20,6 +22,8 @@ $authController = $container->get(AuthController::class);
 $userController = $container->get(UserController::class);
 $recuperarSenhaController = $container->get(RecuperarSenhaController::class);
 $tributacaoController = $container->get(TributacaoController::class);
+$grupoProdutoController = $container->get(GrupoProdutoController::class);
+$produtoController = $container->get(ProdutoController::class);
 
 // - Rotas
 
@@ -46,5 +50,17 @@ $router->create("GET", "/tributacoes", [$tributacaoController, 'index'], $auth);
 $router->create("POST", "/tributacoes", [$tributacaoController, 'store'], $auth);
 $router->create("PUT", "/tributacoes/{uuid}", [$tributacaoController, 'update'], $auth);
 $router->create("DELETE", "/tributacoes/{uuid}", [$tributacaoController, 'destroy'], $auth);
+
+//grupo-produto
+$router->create("GET", "/grupo-produto", [$grupoProdutoController, 'index'], $auth);
+$router->create("POST", "/grupo-produto", [$grupoProdutoController, 'store'], $auth);
+$router->create("PUT", "/grupo-produto/{uuid}", [$grupoProdutoController, 'update'], $auth);
+$router->create("DELETE", "/grupo-produto/{uuid}", [$grupoProdutoController, 'destroy'], $auth);
+
+//produtos
+$router->create("GET", "/produtos", [$produtoController, 'index'], $auth);
+$router->create("POST", "/produtos", [$produtoController, 'store'], $auth);
+$router->create("PUT", "/produtos", [$produtoController, 'update'], $auth);
+$router->create("DELETE", "/produtos", [$produtoController, 'destroy'], $auth);
 
 return $router;

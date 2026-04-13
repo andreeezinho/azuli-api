@@ -49,41 +49,40 @@ trait ValidatorTrait {
         $value = $this->data[$field];
 
         if (is_array($value)) {
-            if (count($value) < $min) {
+            if (count($value) < (int)$min) {
                 $this->errors[$field][] = "O campo $field deve ter no mínimo $min itens.";
             }
             return;
         }
 
-        if (is_numeric($value)) {
-            if ($value < $min) {
-                $this->errors[$field][] = "O campo $field deve ser no mínimo $min.";
+        if (is_string($value)) {
+            if (strlen((string)$value) < (int)$min) {
+                $this->errors[$field][] = "O campo $field deve ter no mínimo $min caracteres.";
             }
         } else {
-            if (strlen((string)$value) < $min) {
-                $this->errors[$field][] = "O campo $field deve ter no mínimo $min caracteres.";
+            if ($value < (int)$min) {
+                $this->errors[$field][] = "O campo $field deve ser no mínimo $min.";
             }
         }
     }
 
     protected function max($field, $max){
-
         $value = $this->data[$field];
 
         if (is_array($value)) {
-            if (count($value) > $max) {
+            if (count($value) > (int)$max) {
                 $this->errors[$field][] = "O campo $field deve ter no máximo $max itens.";
             }
             return;
         }
 
-        if (is_numeric($value)) {
-            if ($value > $max) {
-                $this->errors[$field][] = "O campo $field deve ser no máximo $max.";
+        if (is_string($value)) {
+            if (strlen((string)$value) > (int)$max) {
+                $this->errors[$field][] = "Este campo deve ter no máximo $max caracteres.";
             }
         } else {
-            if (strlen((string)$value) > $max) {
-                $this->errors[$field][] = "Este campo deve ter no máximo $max caracteres.";
+            if ($value > (int)$max) {
+                $this->errors[$field][] = "O campo $field deve ser no máximo $max.";
             }
         }
     }

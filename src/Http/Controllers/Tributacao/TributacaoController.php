@@ -30,14 +30,14 @@ class TributacaoController extends Controller {
         $this->pisRepository = $pisRepository;
     }
 
-    public function index(Request $request, array $params = []){
-        $data = $request->all();
+    public function index(Request $request){
+        $params = $request->all();
 
-        $tipo = $data['tipo'].'Repository';
+        $tipo = $params['tipo'].'Repository';
 
-        unset($data['tipo']);
+        unset($params['tipo']);
 
-        $tributacoes = $this->$tipo->all($data);
+        $tributacoes = $this->$tipo->all($params);
 
         return $this->respJson([
             'message' => 'Tributações listadas',
@@ -77,7 +77,7 @@ class TributacaoController extends Controller {
         ], 201);
     }
 
-    public function update(Request $request, $uuid){
+    public function update(Request $request, string $uuid){
         $data = $request->all();
 
         $tipo = $data['tipo'].'Repository';
@@ -117,7 +117,7 @@ class TributacaoController extends Controller {
         ], 201);
     }
 
-    public function destroy(Request $request, $uuid){
+    public function destroy(Request $request, string $uuid){
         $data = $request->all();
 
         $tipo = $data['tipo'].'Repository';
