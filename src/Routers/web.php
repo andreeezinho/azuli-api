@@ -67,6 +67,9 @@ $router->create("DELETE", "/produtos", [$produtoController, 'destroy'], $auth);
 
 //PDV
 $router->create("GET", "/pdv", [$pdvController, 'index'], null);
+$router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], null);
+$router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], null);
+$router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], null);
 
 
 return $router;

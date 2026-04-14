@@ -12,6 +12,8 @@ use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
 use App\Infra\Persistence\Produto\ProdutoRepository;
 use App\Domain\Repositories\Venda\VendaRepositoryInterface;
 use App\Infra\Persistence\Venda\VendaRepository;
+use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
+use App\Infra\Persistence\Produto\VendaProdutoRepository;
 
 //tributacao
 use App\Domain\Repositories\Tributacao\IcmsRepositoryInterface;
@@ -61,6 +63,12 @@ class DependencyProvider {
             ->set(
                 VendaRepositoryInterface::class,
                 new VendaRepository()
+            );
+
+        $this->container
+            ->set(
+                VendaProdutoRepositoryInterface::class,
+                new VendaProdutoRepository()
             );
         
         $this->container

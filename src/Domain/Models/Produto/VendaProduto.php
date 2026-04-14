@@ -15,6 +15,23 @@ class VendaProduto {
     public float $quantidade;
     public int $vendas_id;
     public int $produtos_id;
+    public string $uuidProduto;
+    public string $nome;
+    public string $codigo;
+    public float $preco;
+    public float $estoque;
+    public string $tipo;
+    public float $quant_entrada;
+    public float $quant_saida;
+    public int $grupo_produto_id;
+    public int $icms_id;
+    public int $ipi_id;
+    public int $pis_id;
+    public int $cofins_id;
+    public int $cfop;
+    public ?int $ncm;
+    public ?int $cest;
+    public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
 
