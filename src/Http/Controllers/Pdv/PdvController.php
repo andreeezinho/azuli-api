@@ -56,7 +56,7 @@ class PdvController extends Controller {
         return $this->respJson([
             'message' => 'Venda em andamento',
             'data' => [
-                'venda' => VendaTransformer::transform($lastSale),
+                'venda' => VendaTransformer::transform($this->calculateTotal($lastSale->uuid)),
                 'produtos' => VendaProdutoTransformer::transformArray($this->vendaProdutoRepository->findProductsInSale($lastSale->id))
             ]
         ]);
@@ -142,7 +142,28 @@ class PdvController extends Controller {
         return $this->respJson([
             'message' => 'Produto removido da venda'
         ], 201);
+    }
 
+    private function calculateTotal(string $uuid){
+        $venda = $this->vendaRepository->findBy('uuid', $uuid);
+
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Venda não encontrada'
+            ], 422);
+        }
+
+        $products = $this->vendaProdutoRepository->findProductsInSale($venda->id);
+
+        $total = $this->vendaRepository->update(['total' => totalPrice($products)], $venda->id);
+
+        if(is_null($total)){
+            return $this->respJson([
+                'message' => 'Não foi possível calcular o valor da venda'
+            ], 500);
+        }
+
+        return $total;
     }
 
 }
