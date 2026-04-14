@@ -194,6 +194,47 @@ class PdvController extends Controller {
         ], 201);
     }
 
+    public function finish(Request $request){
+        $data = $request->all();
+
+        $venda = $this->vendaRepository->findBy('uuid', $data['venda_uuid']);
+        
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Venda não encontrada'
+            ], 422);
+        }
+
+        $verifyProducts = $this->vendaProdutoRepository->findProductsInSale($venda->id);
+
+        if(is_null($verifyProducts) || empty($verifyProducts)){
+            return $this->respJson([
+                'message' => 'Não há produtos na venda'
+            ], 422);
+        }
+
+        $verifyPayment = $this->vendaPagamentoRepository->all(['vendas_id' => $venda->id]);
+
+        if(is_null($verifyPayment) || empty($verifyPayment)){
+            return $this->respJson([
+                'message' => 'Não há método de pagamento para a venda'
+            ], 422);
+        }
+
+        $finish = $this->vendaRepository->update(['situacao' => 'concluida'], $venda->id);
+
+        if(is_null($finish)){
+            return $this->respJson([
+                'message' => 'Não foi possível finalizar venda'
+            ], 500);
+        }
+
+        return $this->respJson([
+            'message' => 'Venda finalizada'
+        ], 201); ///GERAR COMPROVANTE PDF (depois)
+
+    }
+
     private function calculateTotal(string $uuid, float $discount){
         $venda = $this->vendaRepository->findBy('uuid', $uuid);
 

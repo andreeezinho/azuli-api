@@ -78,6 +78,7 @@ $router->create("GET", "/pdv", [$pdvController, 'index'], null);
 $router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], null);
 $router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], null);
 $router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], null);
-$router->create("PUT", "/pdv/prepare-finish", [$pdvController, 'setPaymentMethod'], null);
+$router->create("PUT", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
+$router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
 
 return $router;

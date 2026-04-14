@@ -9,7 +9,11 @@ function dd($data){
     die();
 }
 
-function totalPrice(array $products, float $discount = 0) : float {
+function totalPrice(?array $products, float $discount = 0) : float {
+    if(is_null($products)){
+        return 0;
+    }
+    
     $total = 0;
 
     foreach($products as $product){

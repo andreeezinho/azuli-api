@@ -6,7 +6,11 @@ use App\Domain\Models\Produto\VendaProduto;
 
 class VendaProdutoTransformer {
 
-    public static function transform(VendaProduto $data) : array {
+    public static function transform(?VendaProduto $data) : array {
+        if(is_null($data)){
+            return [];
+        }
+
         return [
             'uuid' => $data->uuid,
             'uuidProduto' => $data->uuidProduto,
@@ -23,7 +27,11 @@ class VendaProdutoTransformer {
         ];
     }
 
-    public static function transformArray(array $produtos) : array {
+    public static function transformArray(?array $produtos) : array {
+        if(is_null($produtos)){
+            return [];
+        }
+
         return array_map(function(VendaProduto $data) {
             return self::transform($data);
         }, $produtos);
