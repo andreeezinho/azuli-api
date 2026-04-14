@@ -12,8 +12,9 @@ class VendaPagamento {
 
     public int $id;
     public ?string $uuid;
+    public float $valor;
     public int $vendas_id;
-    public int $pagamentos_id;
+    public int $pagamento_id;
     public ?string $created_at;
     public ?string $updated_at;
 

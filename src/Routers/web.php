@@ -11,6 +11,7 @@ use App\Http\Controllers\RecuperarSenha\RecuperarSenhaController;
 use App\Http\Controllers\Tributacao\TributacaoController;
 use App\Http\Controllers\GrupoProduto\GrupoProdutoController;
 use App\Http\Controllers\Produto\ProdutoController;
+use App\Http\Controllers\Pagamento\PagamentoController;
 use App\Http\Controllers\Pdv\PdvController;
 
 $router = new Router();
@@ -25,6 +26,7 @@ $recuperarSenhaController = $container->get(RecuperarSenhaController::class);
 $tributacaoController = $container->get(TributacaoController::class);
 $grupoProdutoController = $container->get(GrupoProdutoController::class);
 $produtoController = $container->get(ProdutoController::class);
+$pagamentoController = $container->get(PagamentoController::class);
 $pdvController = $container->get(PdvController::class);
 
 // - Rotas
@@ -65,10 +67,17 @@ $router->create("POST", "/produtos", [$produtoController, 'store'], $auth);
 $router->create("PUT", "/produtos", [$produtoController, 'update'], $auth);
 $router->create("DELETE", "/produtos", [$produtoController, 'destroy'], $auth);
 
+//formas de pagamento
+$router->create("GET", "/pagamentos", [$pagamentoController, 'index'], $auth);
+$router->create("POST", "/pagamentos", [$pagamentoController, 'store'], $auth);
+$router->create("PUT", "/pagamentos", [$pagamentoController, 'update'], $auth);
+$router->create("DELETE", "/pagamentos", [$pagamentoController, 'destroy'], $auth);
+
 //PDV
 $router->create("GET", "/pdv", [$pdvController, 'index'], null);
 $router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], null);
 $router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], null);
 $router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], null);
+$router->create("PUT", "/pdv/prepare-finish", [$pdvController, 'setPaymentMethod'], null);
 
 return $router;

@@ -24,9 +24,26 @@ function totalPrice(array $products, float $discount = 0) : float {
     }
 
     if($discount > 0){
-        $total -= $discount;
-        $total *= -1;
+        $total -= ($total * $discount) / 100;
     }
+
+    return $total;
+}
+
+function calculateTroco(float $total, float $troco, float $received) : float {
+    if($troco < 0){
+        $troco -= $received;
+
+        return $troco;
+    }
+
+    if($troco == 0){
+        $total -= $received;
+
+        return $total;
+    }
+
+    $total = $total - (($total - $troco) + $received);
 
     return $total;
 }

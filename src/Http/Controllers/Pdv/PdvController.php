@@ -5,25 +5,39 @@ namespace App\Http\Controllers\Pdv;
 use App\Http\Controllers\Controller;
 use App\Http\Request\Request;
 use App\Http\Transformer\Venda\VendaTransformer;
+use App\Http\Transformer\Produto\VendaProdutoTransformer;
 use App\Infra\Services\JWT\JWT;
 use App\Domain\Repositories\User\UserRepositoryInterface;
 use App\Domain\Repositories\Venda\VendaRepositoryInterface;
 use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
+use App\Domain\Repositories\Pagamento\PagamentoRepositoryInterface;
 use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
-use App\Http\Transformer\Produto\VendaProdutoTransformer;
+use App\Domain\Repositories\Pagamento\VendaPagamentoRepositoryInterface;
+
 
 class PdvController extends Controller {
 
     protected $userRepository;
     protected $vendaRepository;
     protected $produtoRepository;
+    protected $pagamentoRepository;
     protected $vendaProdutoRepository;
+    protected $vendaPagamentoRepository;
 
-    public function __construct(UserRepositoryInterface $userRepository, VendaRepositoryInterface $vendaRepository, ProdutoRepositoryInterface $produtoRepository, VendaProdutoRepositoryInterface $vendaProdutoRepository){
+    public function __construct(
+        UserRepositoryInterface $userRepository, 
+        VendaRepositoryInterface $vendaRepository, 
+        ProdutoRepositoryInterface $produtoRepository, 
+        PagamentoRepositoryInterface $pagamentoRepository, 
+        VendaProdutoRepositoryInterface $vendaProdutoRepository, 
+        VendaPagamentoRepositoryInterface $vendaPagamentoRepository
+    ){
         $this->userRepository = $userRepository;
         $this->vendaRepository = $vendaRepository;
         $this->produtoRepository = $produtoRepository;
+        $this->pagamentoRepository = $pagamentoRepository;
         $this->vendaProdutoRepository = $vendaProdutoRepository;
+        $this->vendaPagamentoRepository = $vendaPagamentoRepository;
     }
 
     public function index(Request $request){
@@ -56,7 +70,7 @@ class PdvController extends Controller {
         return $this->respJson([
             'message' => 'Venda em andamento',
             'data' => [
-                'venda' => VendaTransformer::transform($this->calculateTotal($lastSale->uuid)),
+                'venda' => VendaTransformer::transform($this->calculateTotal($lastSale->uuid, $lastSale->desconto)),
                 'produtos' => VendaProdutoTransformer::transformArray($this->vendaProdutoRepository->findProductsInSale($lastSale->id))
             ]
         ]);
@@ -144,7 +158,43 @@ class PdvController extends Controller {
         ], 201);
     }
 
-    private function calculateTotal(string $uuid){
+    public function setPaymentMethod(Request $request){
+        $data = $request->all();
+
+        $venda = $this->vendaRepository->findBy('uuid', $data['venda_uuid']);
+        
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Venda não encontrada'
+            ], 422);
+        }
+
+        $pagamento = $this->pagamentoRepository->findBy('uuid', $data['pagamento_uuid']);
+        
+        if(is_null($pagamento)){
+            return $this->respJson([
+                'message' => 'Forma de pagamento não encontrada'
+            ], 422);
+        }
+
+        $data = array_merge($data, ['vendas_id' => $venda->id,'pagamento_id' => $pagamento->id]);
+
+        $vendaPagamento = $this->vendaPagamentoRepository->create($data);
+
+        if(is_null($vendaPagamento)){
+            return $this->respJson([
+                'message' => 'Não foi possível inserir forma de pagamento'
+            ], 500);
+        }
+
+        $this->vendaRepository->update(['troco' => calculateTroco($venda->total, $venda->troco, $data['valor'])], $venda->id);
+
+        return $this->respJson([
+            'message' => 'Forma de pagamento inserida'
+        ], 201);
+    }
+
+    private function calculateTotal(string $uuid, float $discount){
         $venda = $this->vendaRepository->findBy('uuid', $uuid);
 
         if(is_null($venda)){
@@ -155,7 +205,7 @@ class PdvController extends Controller {
 
         $products = $this->vendaProdutoRepository->findProductsInSale($venda->id);
 
-        $total = $this->vendaRepository->update(['total' => totalPrice($products)], $venda->id);
+        $total = $this->vendaRepository->update(['total' => totalPrice($products, $discount)], $venda->id);
 
         if(is_null($total)){
             return $this->respJson([

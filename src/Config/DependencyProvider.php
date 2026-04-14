@@ -14,6 +14,10 @@ use App\Domain\Repositories\Venda\VendaRepositoryInterface;
 use App\Infra\Persistence\Venda\VendaRepository;
 use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
 use App\Infra\Persistence\Produto\VendaProdutoRepository;
+use App\Domain\Repositories\Pagamento\PagamentoRepositoryInterface;
+use App\Infra\Persistence\Pagamento\PagamentoRepository;
+use App\Domain\Repositories\Pagamento\VendaPagamentoRepositoryInterface;
+use App\Infra\Persistence\Pagamento\VendaPagamentoRepository;
 
 //tributacao
 use App\Domain\Repositories\Tributacao\IcmsRepositoryInterface;
@@ -69,6 +73,18 @@ class DependencyProvider {
             ->set(
                 VendaProdutoRepositoryInterface::class,
                 new VendaProdutoRepository()
+            );
+
+        $this->container
+            ->set(
+                PagamentoRepositoryInterface::class,
+                new PagamentoRepository()
+            );
+
+        $this->container
+            ->set(
+                VendaPagamentoRepositoryInterface::class,
+                new VendaPagamentoRepository()
             );
         
         $this->container
