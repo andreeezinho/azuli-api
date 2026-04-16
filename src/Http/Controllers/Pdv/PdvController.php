@@ -231,7 +231,10 @@ class PdvController extends Controller {
 
         return $this->respJson([
             'message' => 'Venda finalizada'
-        ], 201); ///GERAR COMPROVANTE PDF (depois)
+        ], 201); 
+        
+        ///TODO: DAR ENTRADA DE NFe DA VENDA FINALIZADA
+        ///TODO: GERAR COMPROVANTE PDF
 
     }
 
