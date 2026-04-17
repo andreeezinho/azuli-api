@@ -62,4 +62,19 @@ class VendaProdutoRepository extends BaseRepository implements VendaProdutoRepos
         return $result;
     }
 
+    public function deleteAllProductsInSale(int $vendas_id){
+        $sql = "DELETE FROM " . $this->model->getTable() . "
+            WHERE
+                vendas_id = :vendas_id
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $delete = $stmt->execute([
+            ':vendas_id' => $vendas_id
+        ]);
+
+        return $delete;
+    }
+
 }

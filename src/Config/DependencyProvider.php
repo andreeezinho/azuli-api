@@ -18,6 +18,12 @@ use App\Domain\Repositories\Pagamento\PagamentoRepositoryInterface;
 use App\Infra\Persistence\Pagamento\PagamentoRepository;
 use App\Domain\Repositories\Pagamento\VendaPagamentoRepositoryInterface;
 use App\Infra\Persistence\Pagamento\VendaPagamentoRepository;
+use App\Domain\Repositories\Endereco\EnderecoRepositoryInterface;
+use App\Infra\Persistence\Endereco\EnderecoRepository;
+use App\Domain\Repositories\Cliente\ClienteRepositoryInterface;
+use App\Infra\Persistence\Cliente\ClienteRepository;
+use App\Domain\Repositories\Cliente\VendaClienteRepositoryInterface;
+use App\Infra\Persistence\Cliente\VendaClienteRepository;
 
 //tributacao
 use App\Domain\Repositories\Tributacao\IcmsRepositoryInterface;
@@ -85,6 +91,24 @@ class DependencyProvider {
             ->set(
                 VendaPagamentoRepositoryInterface::class,
                 new VendaPagamentoRepository()
+            );
+
+        $this->container
+            ->set(
+                EnderecoRepositoryInterface::class,
+                new EnderecoRepository()
+            );
+
+        $this->container
+            ->set(
+                ClienteRepositoryInterface::class,
+                new ClienteRepository()
+            );
+
+        $this->container
+            ->set(
+                VendaClienteRepositoryInterface::class,
+                new VendaClienteRepository()
             );
         
         $this->container

@@ -94,8 +94,6 @@ class GrupoProdutoController extends Controller {
     }
 
     public function destroy(Request $request, $uuid){
-        $data = $request->all();
-
         $grupo = $this->grupoProdutoRepository->findBy('uuid', $uuid);
 
         if(is_null($grupo)){

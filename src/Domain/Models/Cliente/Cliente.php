@@ -18,7 +18,7 @@ class Cliente {
     public string $telefone;
     public ?string $ie_rg;
     public int $contribuinte;
-    public int $enderecos_id;
+    public ?int $enderecos_id;
     public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;

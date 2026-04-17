@@ -18,4 +18,6 @@ interface VendaProdutoRepositoryInterface {
 
     public function findBySaleAndProduct(int $vendas_id, int $produtos_id);
 
+    public function deleteAllProductsInSale(int $vendas_id);
+
 }

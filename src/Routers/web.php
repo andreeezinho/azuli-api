@@ -4,7 +4,6 @@ use App\Config\Router;
 use App\Config\Auth;
 use App\Config\Container;
 use App\Config\DependencyProvider;
-
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\RecuperarSenha\RecuperarSenhaController;
@@ -12,6 +11,8 @@ use App\Http\Controllers\Tributacao\TributacaoController;
 use App\Http\Controllers\GrupoProduto\GrupoProdutoController;
 use App\Http\Controllers\Produto\ProdutoController;
 use App\Http\Controllers\Pagamento\PagamentoController;
+use App\Http\Controllers\Endereco\EnderecoController;
+use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Pdv\PdvController;
 
 $router = new Router();
@@ -27,6 +28,8 @@ $tributacaoController = $container->get(TributacaoController::class);
 $grupoProdutoController = $container->get(GrupoProdutoController::class);
 $produtoController = $container->get(ProdutoController::class);
 $pagamentoController = $container->get(PagamentoController::class);
+$enderecoController = $container->get(EnderecoController::class);
+$clienteController = $container->get(ClienteController::class);
 $pdvController = $container->get(PdvController::class);
 
 // - Rotas
@@ -73,11 +76,26 @@ $router->create("POST", "/pagamentos", [$pagamentoController, 'store'], $auth);
 $router->create("PUT", "/pagamentos", [$pagamentoController, 'update'], $auth);
 $router->create("DELETE", "/pagamentos", [$pagamentoController, 'destroy'], $auth);
 
+//enderecos
+$router->create("GET", "/enderecos", [$enderecoController, 'index'], $auth);
+$router->create("POST", "/enderecos", [$enderecoController, 'store'], $auth);
+$router->create("PUT", "/enderecos", [$enderecoController, 'update'], $auth);
+$router->create("DELETE", "/enderecos", [$enderecoController, 'destroy'], $auth);
+
+//clientes
+$router->create("GET", "/clientes", [$clienteController, 'index'], $auth);
+$router->create("POST", "/clientes", [$clienteController, 'store'], $auth);
+$router->create("PUT", "/clientes", [$clienteController, 'update'], $auth);
+$router->create("DELETE", "/clientes", [$clienteController, 'destroy'], $auth);
+
 //PDV
 $router->create("GET", "/pdv", [$pdvController, 'index'], null);
 $router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], null);
 $router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], null);
 $router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], null);
+$router->create("DELETE", "/pdv/remove-all", [$pdvController, 'removeAllProductsInSale'], null);
+$router->create("POST", "/pdv/vincular-cliente", [$pdvController, 'bindClientOnSale'], null);
+// $router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkClientOnSale'], null);
 $router->create("PUT", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
 $router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
 

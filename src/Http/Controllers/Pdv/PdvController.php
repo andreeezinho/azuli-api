@@ -13,6 +13,8 @@ use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
 use App\Domain\Repositories\Pagamento\PagamentoRepositoryInterface;
 use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
 use App\Domain\Repositories\Pagamento\VendaPagamentoRepositoryInterface;
+use App\Domain\Repositories\Cliente\ClienteRepositoryInterface;
+use App\Domain\Repositories\Cliente\VendaClienteRepositoryInterface;
 
 
 class PdvController extends Controller {
@@ -23,6 +25,8 @@ class PdvController extends Controller {
     protected $pagamentoRepository;
     protected $vendaProdutoRepository;
     protected $vendaPagamentoRepository;
+    protected $clienteRepository;
+    protected $vendaClienteRepository;
 
     public function __construct(
         UserRepositoryInterface $userRepository, 
@@ -30,7 +34,9 @@ class PdvController extends Controller {
         ProdutoRepositoryInterface $produtoRepository, 
         PagamentoRepositoryInterface $pagamentoRepository, 
         VendaProdutoRepositoryInterface $vendaProdutoRepository, 
-        VendaPagamentoRepositoryInterface $vendaPagamentoRepository
+        VendaPagamentoRepositoryInterface $vendaPagamentoRepository,
+        ClienteRepositoryInterface $clienteRepository,
+        VendaClienteRepositoryInterface $vendaClienteRepository
     ){
         $this->userRepository = $userRepository;
         $this->vendaRepository = $vendaRepository;
@@ -38,6 +44,8 @@ class PdvController extends Controller {
         $this->pagamentoRepository = $pagamentoRepository;
         $this->vendaProdutoRepository = $vendaProdutoRepository;
         $this->vendaPagamentoRepository = $vendaPagamentoRepository;
+        $this->clienteRepository = $clienteRepository;
+        $this->vendaClienteRepository = $vendaClienteRepository;
     }
 
     public function index(Request $request){
@@ -97,6 +105,12 @@ class PdvController extends Controller {
 
         $data = array_merge(['vendas_id' => $venda->id, 'produtos_id' => $produto->id], $data);
 
+        $allProductsInsale = $this->vendaProdutoRepository->findProductsInSale($venda->id);
+
+        if(is_null($allProductsInsale) || empty($allProductsInsale)){
+            $this->vendaRepository->update(['created_at' => date("Y-m-d H:i:s")], $venda->id);
+        }
+
         $vendaProduto = $this->vendaProdutoRepository->create($data);
 
         if(is_null($vendaProduto)){
@@ -155,6 +169,101 @@ class PdvController extends Controller {
 
         return $this->respJson([
             'message' => 'Produto removido da venda'
+        ], 201);
+    }
+
+    public function removeAllProductsInSale(Request $request){
+        $data = $request->all();
+
+        $venda = $this->vendaRepository->findBy('uuid', $data['venda_uuid']);
+
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar venda em aberto'
+            ], 422);
+        }
+
+        $vendaProduto = $this->vendaProdutoRepository->deleteAllProductsInSale($venda->id);
+
+        if(is_null($vendaProduto)){
+            return $this->respJson([
+                'message' => 'Não foi possível remover produtos'
+            ], 422);
+        }
+
+        return $this->respJson([
+            'message' => 'Produtos removidos'
+        ], 201);
+    }
+
+    //TODO: linkar cliente com a venda
+    //TODO: remover link do cliente com a venda
+
+    public function bindClientOnSale(Request $request){
+        $data = $request->all();
+
+        $venda = $this->vendaRepository->findBy('uuid', $data['venda_uuid']);
+
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar venda em aberto'
+            ], 422);
+        }
+
+        $cliente = $this->clienteRepository->findBy('uuid', $data['cliente_uuid']);
+
+        if(is_null($cliente)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar cliente'
+            ], 422);
+        }
+
+        $findOldClient = $this->vendaClienteRepository->findClientInSale($venda->id)[0];
+
+        if(!is_null($findOldClient) || !empty($findOldClient)){
+            $unlinkClient = $this->vendaClienteRepository->delete($findOldClient->id);
+
+            if(is_null($unlinkClient)){
+                return $this->respJson([
+                    'message' => 'Não foi possível desvincular cliente anterior'
+                ], 500);
+            }
+        }
+        
+        $bindClient = $this->vendaClienteRepository->create(['vendas_id' => $venda->id, 'clientes_id' => $cliente->id]);
+
+        if(is_null($bindClient)){
+            return $this->respJson([
+                'message' => 'Não foi possível vincular cliente à venda'
+            ], 500);
+        }
+
+        return $this->respJson([
+            'message' => 'Cliente vinculado à venda com sucesso'
+        ], 201);
+    }
+
+    public function unlinkClientOnSale(Request $request){
+        $data = $request->all();
+
+        $vendaCliente = $this->vendaClienteRepository->findBy('uuid', $data['uuid']);
+
+        if(is_null($vendaCliente)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar cliente na venda'
+            ], 422);
+        }
+
+        $unlinkClient = $this->vendaClienteRepository->delete($vendaCliente->id);
+
+        if(is_null($unlinkClient)){
+            return $this->respJson([
+                'message' => 'Não foi possível desvincular cliente da venda'
+            ], 500);
+        }
+
+        return $this->respJson([
+            'message' => 'Cliente desvinculado da venda'
         ], 201);
     }
 
@@ -221,6 +330,12 @@ class PdvController extends Controller {
             ], 422);
         }
 
+        if($venda->troco > 0){
+            return $this->respJson([
+                'message' => 'O valor da venda não foi totalmente pago'
+            ], 422);
+        }
+
         $finish = $this->vendaRepository->update(['situacao' => 'concluida'], $venda->id);
 
         if(is_null($finish)){
@@ -235,7 +350,6 @@ class PdvController extends Controller {
         
         ///TODO: DAR ENTRADA DE NFe DA VENDA FINALIZADA
         ///TODO: GERAR COMPROVANTE PDF
-
     }
 
     private function calculateTotal(string $uuid, float $discount){

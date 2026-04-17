@@ -8,6 +8,8 @@ class Endereco {
 
     use ModelTrait;
 
+    public const TABLE = 'enderecos';
+
     public int $id;
     public ?string $uuid;
     public string $cep;
@@ -18,6 +20,7 @@ class Endereco {
     public string $bairro;
     public string $numero;
     public ?string $complemento;
+    public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
 
