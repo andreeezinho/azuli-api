@@ -24,6 +24,8 @@ use App\Domain\Repositories\Cliente\ClienteRepositoryInterface;
 use App\Infra\Persistence\Cliente\ClienteRepository;
 use App\Domain\Repositories\Cliente\VendaClienteRepositoryInterface;
 use App\Infra\Persistence\Cliente\VendaClienteRepository;
+use App\Domain\Repositories\Destinatario\DestinatarioRepositoryInterface;
+use App\Infra\Persistence\Destinatario\DestinatarioRepository;
 
 //tributacao
 use App\Domain\Repositories\Tributacao\IcmsRepositoryInterface;
@@ -109,6 +111,12 @@ class DependencyProvider {
             ->set(
                 VendaClienteRepositoryInterface::class,
                 new VendaClienteRepository()
+            );
+
+        $this->container
+            ->set(
+                DestinatarioRepositoryInterface::class,
+                new DestinatarioRepository()
             );
         
         $this->container

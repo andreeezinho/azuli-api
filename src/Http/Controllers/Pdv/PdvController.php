@@ -15,7 +15,7 @@ use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
 use App\Domain\Repositories\Pagamento\VendaPagamentoRepositoryInterface;
 use App\Domain\Repositories\Cliente\ClienteRepositoryInterface;
 use App\Domain\Repositories\Cliente\VendaClienteRepositoryInterface;
-
+use App\Http\Transformer\Cliente\VendaClienteTransformer;
 
 class PdvController extends Controller {
 
@@ -196,8 +196,22 @@ class PdvController extends Controller {
         ], 201);
     }
 
-    //TODO: linkar cliente com a venda
-    //TODO: remover link do cliente com a venda
+    public function getClientFromSale(Request $request, $uuid){
+        $venda = $this->vendaRepository->findBy('uuid', $uuid);
+
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar venda em aberto'
+            ], 422);
+        }
+
+        $cliente = $this->vendaClienteRepository->findClientInSale($venda->id)[0] ?? null;
+
+        return $this->respJson([
+            'message' => 'Cliente vinculado à venda',
+            'data' => VendaClienteTransformer::transform($cliente)
+        ]);
+    }
 
     public function bindClientOnSale(Request $request){
         $data = $request->all();
@@ -243,7 +257,7 @@ class PdvController extends Controller {
         ], 201);
     }
 
-    public function unlinkClientOnSale(Request $request){
+    public function unlinkClientFromSale(Request $request){
         $data = $request->all();
 
         $vendaCliente = $this->vendaClienteRepository->findBy('uuid', $data['uuid']);

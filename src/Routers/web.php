@@ -14,6 +14,7 @@ use App\Http\Controllers\Pagamento\PagamentoController;
 use App\Http\Controllers\Endereco\EnderecoController;
 use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Pdv\PdvController;
+use App\Http\Controllers\Destinatario\DestinatarioController;
 
 $router = new Router();
 $auth = new Auth();
@@ -31,6 +32,7 @@ $pagamentoController = $container->get(PagamentoController::class);
 $enderecoController = $container->get(EnderecoController::class);
 $clienteController = $container->get(ClienteController::class);
 $pdvController = $container->get(PdvController::class);
+$destinatarioController = $container->get(DestinatarioController::class);
 
 // - Rotas
 
@@ -67,26 +69,26 @@ $router->create("DELETE", "/grupo-produto/{uuid}", [$grupoProdutoController, 'de
 //produtos
 $router->create("GET", "/produtos", [$produtoController, 'index'], $auth);
 $router->create("POST", "/produtos", [$produtoController, 'store'], $auth);
-$router->create("PUT", "/produtos", [$produtoController, 'update'], $auth);
-$router->create("DELETE", "/produtos", [$produtoController, 'destroy'], $auth);
+$router->create("PUT", "/produtos/{uuid}", [$produtoController, 'update'], $auth);
+$router->create("DELETE", "/produtos/{uuid}", [$produtoController, 'destroy'], $auth);
 
 //formas de pagamento
 $router->create("GET", "/pagamentos", [$pagamentoController, 'index'], $auth);
 $router->create("POST", "/pagamentos", [$pagamentoController, 'store'], $auth);
-$router->create("PUT", "/pagamentos", [$pagamentoController, 'update'], $auth);
-$router->create("DELETE", "/pagamentos", [$pagamentoController, 'destroy'], $auth);
+$router->create("PUT", "/pagamentos/{uuid}", [$pagamentoController, 'update'], $auth);
+$router->create("DELETE", "/pagamentos/{uuid}", [$pagamentoController, 'destroy'], $auth);
 
 //enderecos
 $router->create("GET", "/enderecos", [$enderecoController, 'index'], $auth);
 $router->create("POST", "/enderecos", [$enderecoController, 'store'], $auth);
-$router->create("PUT", "/enderecos", [$enderecoController, 'update'], $auth);
-$router->create("DELETE", "/enderecos", [$enderecoController, 'destroy'], $auth);
+$router->create("PUT", "/enderecos/{uuid}", [$enderecoController, 'update'], $auth);
+$router->create("DELETE", "/enderecos/{uuid}", [$enderecoController, 'destroy'], $auth);
 
 //clientes
 $router->create("GET", "/clientes", [$clienteController, 'index'], $auth);
 $router->create("POST", "/clientes", [$clienteController, 'store'], $auth);
-$router->create("PUT", "/clientes", [$clienteController, 'update'], $auth);
-$router->create("DELETE", "/clientes", [$clienteController, 'destroy'], $auth);
+$router->create("PUT", "/clientes/{uuid}", [$clienteController, 'update'], $auth);
+$router->create("DELETE", "/clientes/{uuid}", [$clienteController, 'destroy'], $auth);
 
 //PDV
 $router->create("GET", "/pdv", [$pdvController, 'index'], null);
@@ -94,9 +96,16 @@ $router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], null);
 $router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], null);
 $router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], null);
 $router->create("DELETE", "/pdv/remove-all", [$pdvController, 'removeAllProductsInSale'], null);
+$router->create("GET", "/pdv/{uuid}/cliente", [$pdvController, 'getClientFromSale'], null);
 $router->create("POST", "/pdv/vincular-cliente", [$pdvController, 'bindClientOnSale'], null);
-// $router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkClientOnSale'], null);
+$router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkClientFromSale'], null);
 $router->create("PUT", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
 $router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
+
+//destinatarios
+$router->create("GET", "/destinatarios", [$destinatarioController, 'index'], $auth);
+$router->create("POST", "/destinatarios", [$destinatarioController, 'store'], $auth);
+$router->create("PUT", "/destinatarios/{uuid}", [$destinatarioController, 'update'], $auth);
+$router->create("DELETE", "/destinatarios/{uuid}", [$destinatarioController, 'destroy'], $auth);
 
 return $router;

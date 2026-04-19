@@ -21,7 +21,7 @@ class ClienteController extends Controller {
         $clientes = $this->clienteRepository->all($params);
 
         return $this->respJson([
-            'message' => 'Endereços listados',
+            'message' => 'Clientes listados',
             'data' => ClienteTransformer::transformArray($clientes)
         ]);
     }
@@ -50,7 +50,7 @@ class ClienteController extends Controller {
 
         if(is_null($cliente)){
             return $this->respJson([
-                'message' => 'Não foi possível cadastrar endereço'
+                'message' => 'Não foi possível cadastrar cliente'
             ], 500);
         }
 
@@ -67,7 +67,7 @@ class ClienteController extends Controller {
 
         if(is_null($cliente)){
             return $this->respJson([
-                'message' => 'Endereço não encontrado'
+                'message' => 'Cliente não encontrado'
             ], 422);
         }
 
@@ -92,12 +92,12 @@ class ClienteController extends Controller {
 
         if(is_null($cliente)){
             return $this->respJson([
-                'message' => 'Não foi possível atualizar endereço'
+                'message' => 'Não foi possível atualizar cliente'
             ], 500);
         }
 
         return $this->respJson([
-            'message' => 'Sucesso ao atualizar endereço',
+            'message' => 'Sucesso ao atualizar cliente',
             'data' => ClienteTransformer::transform($cliente)
         ], 201);
     }
@@ -107,7 +107,7 @@ class ClienteController extends Controller {
 
         if(is_null($cliente)){
             return $this->respJson([
-                'message' => 'Endereço não encontrado'
+                'message' => 'Cliente não encontrado'
             ], 422);
         }
 
@@ -115,12 +115,12 @@ class ClienteController extends Controller {
 
         if(!$cliente){
             return $this->respJson([
-                'message' => 'Não foi possível deletar endereço'
+                'message' => 'Não foi possível deletar cliente'
             ], 500);
         }
 
         return $this->respJson([
-            'message' => 'Endereço deletado'
+            'message' => 'Cliente deletado'
         ], 201);
     }
 

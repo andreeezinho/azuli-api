@@ -18,7 +18,7 @@ class VendaClienteRepository extends BaseRepository implements VendaClienteRepos
     public function findClientInSale(int $vendas_id){
         $stmt = $this->conn->prepare(
             "SELECT vc.*,
-                c.uuid as uuidCliente, c.nome as nome, c.email as email, c.telefone as telefone, c.nome as nome, c.ativo as ativo
+                c.uuid as uuidCliente, c.nome as nome, c.email as email, c.telefone as telefone, c.nome as nome, c.documento as documento, c.ativo as ativo
             FROM " . $this->model->getTable() . " vc
             JOIN vendas v
                 ON vendas_id = v.id
