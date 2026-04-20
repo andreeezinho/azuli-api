@@ -7,6 +7,7 @@ use App\Http\Request\Request;
 use App\Http\Transformer\Venda\VendaTransformer;
 use App\Http\Transformer\Produto\VendaProdutoTransformer;
 use App\Infra\Services\JWT\JWT;
+use App\Infra\Services\NFe\NFeService;
 use App\Domain\Repositories\User\UserRepositoryInterface;
 use App\Domain\Repositories\Venda\VendaRepositoryInterface;
 use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
@@ -27,6 +28,7 @@ class PdvController extends Controller {
     protected $vendaPagamentoRepository;
     protected $clienteRepository;
     protected $vendaClienteRepository;
+    protected $nfeService;
 
     public function __construct(
         UserRepositoryInterface $userRepository, 
@@ -36,7 +38,8 @@ class PdvController extends Controller {
         VendaProdutoRepositoryInterface $vendaProdutoRepository, 
         VendaPagamentoRepositoryInterface $vendaPagamentoRepository,
         ClienteRepositoryInterface $clienteRepository,
-        VendaClienteRepositoryInterface $vendaClienteRepository
+        VendaClienteRepositoryInterface $vendaClienteRepository,
+        NFeService $nfeService
     ){
         $this->userRepository = $userRepository;
         $this->vendaRepository = $vendaRepository;
@@ -46,6 +49,7 @@ class PdvController extends Controller {
         $this->vendaPagamentoRepository = $vendaPagamentoRepository;
         $this->clienteRepository = $clienteRepository;
         $this->vendaClienteRepository = $vendaClienteRepository;
+        $this->nfeService = $nfeService;
     }
 
     public function index(Request $request){
@@ -95,6 +99,7 @@ class PdvController extends Controller {
             ], 422);
         }
 
+        //TODO: mudar findBy para codigo do produto ao inves do uuid
         $produto = $this->produtoRepository->findBy('uuid', $data['produto_uuid']);
 
         if(is_null($produto)){

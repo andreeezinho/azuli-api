@@ -1,5 +1,5 @@
 <?php
-
+//TODO: criar outro model nota fiscal ENTRADA
 namespace App\Domain\Models\NotaFiscal;
 
 use App\Domain\Models\Traits\ModelTrait;
@@ -16,6 +16,7 @@ class NotaFiscal {
     public int $num_nf;
     public int $vendas_id;
     public int $destinatarios_id;
+    public string $xml_path;
     public string $situacao;
     public ?string $created_at;
     public ?string $updated_at;

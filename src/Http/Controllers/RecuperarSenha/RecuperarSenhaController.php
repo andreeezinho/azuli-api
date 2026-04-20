@@ -92,7 +92,7 @@ class RecuperarSenhaController extends Controller {
             ], 422);
         }
 
-        $update = $this->userRepository->updateSenha($data, $user->id);
+        $update = $this->userRepository->update($data['senha'], $user->id);
 
         if(is_null($update)){
             return $this->respJson([

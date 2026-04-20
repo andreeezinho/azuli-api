@@ -14,7 +14,7 @@ use App\Http\Controllers\Pagamento\PagamentoController;
 use App\Http\Controllers\Endereco\EnderecoController;
 use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Pdv\PdvController;
-use App\Http\Controllers\Destinatario\DestinatarioController;
+use App\Http\Controllers\Empresa\EmpresaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -32,7 +32,7 @@ $pagamentoController = $container->get(PagamentoController::class);
 $enderecoController = $container->get(EnderecoController::class);
 $clienteController = $container->get(ClienteController::class);
 $pdvController = $container->get(PdvController::class);
-$destinatarioController = $container->get(DestinatarioController::class);
+$empresaController = $container->get(EmpresaController::class);
 
 // - Rotas
 
@@ -103,9 +103,9 @@ $router->create("PUT", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], n
 $router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
 
 //destinatarios
-$router->create("GET", "/destinatarios", [$destinatarioController, 'index'], $auth);
-$router->create("POST", "/destinatarios", [$destinatarioController, 'store'], $auth);
-$router->create("PUT", "/destinatarios/{uuid}", [$destinatarioController, 'update'], $auth);
-$router->create("DELETE", "/destinatarios/{uuid}", [$destinatarioController, 'destroy'], $auth);
+$router->create("GET", "/empresas", [$empresaController, 'index'], $auth);
+$router->create("POST", "/empresas", [$empresaController, 'store'], $auth);
+$router->create("PUT", "/empresas/{uuid}", [$empresaController, 'update'], $auth);
+$router->create("DELETE", "/empresas/{uuid}", [$empresaController, 'destroy'], $auth);
 
 return $router;

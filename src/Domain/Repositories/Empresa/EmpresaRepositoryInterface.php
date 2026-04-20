@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Domain\Repositories\Destinatario;
+namespace App\Domain\Repositories\Empresa;
 
-interface DestinatarioRepositoryInterface {
+interface EmpresaRepositoryInterface {
 
     public function all(array $params);
 

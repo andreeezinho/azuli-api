@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Transformer\Destinatario;
+namespace App\Http\Transformer\Empresa;
 
-use App\Domain\Models\Destinatario\Destinatario;
+use App\Domain\Models\Empresa\Empresa;
 
-class DestinatarioTransformer {
+class EmpresaTransformer {
 
-    public static function transform(Destinatario $data) : array {
+    public static function transform(Empresa $data) : array {
         return [
             'uuid' => $data->uuid,
             'razao_social' => $data->razao_social,
@@ -22,7 +22,7 @@ class DestinatarioTransformer {
     }
 
     public static function transformArray(array $produtos) : array {
-        return array_map(function(Destinatario $data) {
+        return array_map(function(Empresa $data) {
             return self::transform($data);
         }, $produtos);
     }
