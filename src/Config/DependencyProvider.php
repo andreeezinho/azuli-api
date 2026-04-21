@@ -30,6 +30,11 @@ use App\Domain\Repositories\Emitente\EmitenteRepositoryInterface;
 use App\Infra\Persistence\Emitente\EmitenteRepository;
 use App\Domain\Repositories\Destinatario\DestinatarioRepositoryInterface;
 use App\Infra\Persistence\Destinatario\DestinatarioRepository;
+use App\Domain\Repositories\NotaFiscal\NotaFiscalRepositoryInterface;
+use App\Infra\Persistence\NotaFiscal\NotaFiscalRepository;
+use App\Domain\Repositories\NotaFiscal\NotaFiscalEntradaRepositoryInterface;
+use App\Infra\Persistence\NotaFiscal\NotaFiscalEntradaRepository;
+
 
 //tributacao
 use App\Domain\Repositories\Tributacao\IcmsRepositoryInterface;
@@ -133,6 +138,18 @@ class DependencyProvider {
             ->set(
                 DestinatarioRepositoryInterface::class,
                 new DestinatarioRepository()
+            );
+
+        $this->container
+            ->set(
+                NotaFiscalRepositoryInterface::class,
+                new NotaFiscalRepository()
+            );
+
+        $this->container
+            ->set(
+                NotaFiscalEntradaRepositoryInterface::class,
+                new NotaFiscalEntradaRepository()
             );
         
         $this->container

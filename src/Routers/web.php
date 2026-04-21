@@ -15,6 +15,7 @@ use App\Http\Controllers\Endereco\EnderecoController;
 use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Pdv\PdvController;
 use App\Http\Controllers\Empresa\EmpresaController;
+use App\Http\Controllers\NotaFiscal\NotaFiscalController;
 
 $router = new Router();
 $auth = new Auth();
@@ -33,6 +34,7 @@ $enderecoController = $container->get(EnderecoController::class);
 $clienteController = $container->get(ClienteController::class);
 $pdvController = $container->get(PdvController::class);
 $empresaController = $container->get(EmpresaController::class);
+$notaFiscalController = $container->get(NotaFiscalController::class);
 
 // - Rotas
 
@@ -102,10 +104,13 @@ $router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkCl
 $router->create("PUT", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
 $router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
 
-//destinatarios
+//empresas
 $router->create("GET", "/empresas", [$empresaController, 'index'], $auth);
 $router->create("POST", "/empresas", [$empresaController, 'store'], $auth);
 $router->create("PUT", "/empresas/{uuid}", [$empresaController, 'update'], $auth);
 $router->create("DELETE", "/empresas/{uuid}", [$empresaController, 'destroy'], $auth);
+
+$router->create("POST", "/nota-fiscal/chave", [$notaFiscalController, 'getInvoiceByKey'], $auth);
+
 
 return $router;
