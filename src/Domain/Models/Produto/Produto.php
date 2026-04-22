@@ -20,10 +20,10 @@ class Produto {
     public float $quant_entrada;
     public float $quant_saida;
     public int $grupo_produto_id;
-    public int $icms_id;
-    public int $ipi_id;
-    public int $pis_id;
-    public int $cofins_id;
+    public ?int $icms_id;
+    public ?int $ipi_id;
+    public ?int $pis_id;
+    public ?int $cofins_id;
     public int $cfop;
     public ?int $ncm;
     public ?int $cest;

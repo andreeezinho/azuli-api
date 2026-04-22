@@ -9,10 +9,12 @@ use App\Domain\Repositories\NotaFiscal\NotaFiscalRepositoryInterface;
 use App\Domain\Repositories\NotaFiscal\NotaFiscalEntradaRepositoryInterface;
 use App\Domain\Repositories\Empresa\EmpresaRepositoryInterface;
 use App\Domain\Repositories\Venda\VendaRepositoryInterface;
+use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
 use App\Domain\Repositories\Destinatario\DestinatarioRepositoryInterface;
 use App\Domain\Repositories\Emitente\EmitenteRepositoryInterface;
 use App\Domain\Repositories\Endereco\EnderecoRepositoryInterface;
 use App\Infra\Services\NFe\NFeService;
+use App\Infra\Services\Xml\XmlService;
 
 class NotaFiscalController extends Controller {
 
@@ -20,29 +22,35 @@ class NotaFiscalController extends Controller {
     protected $notaFiscalEntradaRepository;
     protected $empresaRepository;
     protected $vendaRepository;
+    protected $produtoRepository;
     protected $destinatarioRepository;
     protected $emitenteRepository;
     protected $enderecoRepository;
     protected $nfeService;
+    protected $xmlService;
 
     public function __construct(
         NotaFiscalRepositoryInterface $notaFiscalRepository,
         NotaFiscalEntradaRepositoryInterface $notaFiscalEntradaRepository,
         EmpresaRepositoryInterface $empresaRepository,
         VendaRepositoryInterface $vendaRepository,
+        ProdutoRepositoryInterface $produtoRepository,
         DestinatarioRepositoryInterface $destinatarioRepository,
         EmitenteRepositoryInterface $emitenteRepository,
         EnderecoRepositoryInterface $enderecoRepository,
-        NFeService $nfeService
+        NFeService $nfeService,
+        XmlService $xmlService
     ){
         $this->notaFiscalRepository = $notaFiscalRepository;
         $this->notaFiscalEntradaRepository = $notaFiscalEntradaRepository;
         $this->empresaRepository = $empresaRepository;
         $this->vendaRepository = $vendaRepository;
+        $this->produtoRepository = $produtoRepository;
         $this->destinatarioRepository = $destinatarioRepository;
         $this->emitenteRepository = $emitenteRepository;
         $this->enderecoRepository = $enderecoRepository;
         $this->nfeService = $nfeService;
+        $this->xmlService = $xmlService;
     }
 
     // TODO: service do notafiscal com os metodos utilizando sdk do SPED-NFE
@@ -122,7 +130,7 @@ class NotaFiscalController extends Controller {
             'num_nf' => (int)$nfe['nfeArray']['NFe']['infNFe']['ide']['nNF'],
             'nat_op' => $nfe['nfeArray']['NFe']['infNFe']['ide']['natOp'],
             'gravada' => false,
-            'data_emissao' => $nfe['nfeArray']['NFe']['infNFe']['ide']['dhSaiEnt'],
+            'data_emissao' => $nfe['nfeArray']['NFe']['infNFe']['ide']['dhEmi'],
             'emitentes_id' => $emitente->id,
             'xml_path' => $nfe['xml']
         ]);
@@ -136,6 +144,50 @@ class NotaFiscalController extends Controller {
         return $this->respJson([
             'message' => 'NFe encontrada',
             'data' => NotaFiscalEntradaTransformer::transform($create)
+        ], 201);
+    }
+
+    public function registerInvoiceProducts(Request $request, $uuid){
+        $nfe = $this->notaFiscalEntradaRepository->findBy('uuid', $uuid);
+
+        if(is_null($nfe)){
+            return $this->respJson([
+                'message' => 'Nota fiscal não encontrada'
+            ], 422);
+        }
+
+        if($nfe->gravada != 0){
+            return $this->respJson([
+                'message' => 'Os produtos da nota fiscal já foram gravados'
+            ], 422);
+        }
+
+        $xmlArr = $this->xmlService->convertXmltoArray($nfe->xml_path);
+
+        if(is_null($xmlArr)){
+            return $this->respJson([
+                'message' => 'Não foi possível converter o xml'
+            ], 500);
+        }
+        
+        $registerProducts = $this->produtoRepository->registerProductsFromInvoice($xmlArr['NFe']['infNFe']['det']);
+        
+        if(is_null($registerProducts)){
+            return $this->respJson([
+                'message' => 'Não foi possível gravar os produtos da NFe'
+            ], 500);
+        }
+
+        $update = $this->notaFiscalEntradaRepository->update(['gravada' => 1], $nfe->id);
+
+        if(is_null($update)){
+            return $this->respJson([
+                'message' => 'Produtos cadastrados mas não foi possível atualizar NFe no sistema'
+            ], 500);
+        }
+
+        return $this->respJson([
+            'message' => 'Produtos gravados com sucesso'
         ], 201);
     }
 

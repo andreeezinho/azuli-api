@@ -111,6 +111,7 @@ $router->create("PUT", "/empresas/{uuid}", [$empresaController, 'update'], $auth
 $router->create("DELETE", "/empresas/{uuid}", [$empresaController, 'destroy'], $auth);
 
 $router->create("POST", "/nota-fiscal/chave", [$notaFiscalController, 'getInvoiceByKey'], $auth);
+$router->create("POST", "/nota-fiscal/{uuid}", [$notaFiscalController, 'registerInvoiceProducts'], $auth);
 
 
 return $router;

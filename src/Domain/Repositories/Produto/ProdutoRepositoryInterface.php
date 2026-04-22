@@ -14,4 +14,6 @@ interface ProdutoRepositoryInterface {
 
     public function findBy(string $field, mixed $value);
 
+    public function registerProductsFromInvoice(array $products);
+
 }
