@@ -1,6 +1,5 @@
 <?php
 
-//TODO: substituir para novo model 'empresas' e outros dois models que extendem dele -> emitentes e destinatarios
 namespace App\Domain\Models\Empresa;
 
 use App\Domain\Models\Traits\ModelTrait;
@@ -14,7 +13,7 @@ class Empresa {
     public int $id;
     public ?string $uuid;
     public string $razao_social;
-    public string $nome_fantasia;
+    public ?string $nome_fantasia;
     public string $documento;
     public string $ie_rg;
     public int $num_serie_nfe;

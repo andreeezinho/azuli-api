@@ -15,6 +15,7 @@ class NotaFiscalEntradaTransformer {
             'gravada' => $data->gravada,
             'data_emissao' => $data->data_emissao,
             'emitentes_id' => $data->emitentes_id,
+            'total' => $data->total,
             'xml_path' => $data->xml_path,
             'created_at' => $data->created_at,
             'updated_at' => $data->updated_at

@@ -17,6 +17,7 @@ class NotaFiscal {
     public string $nat_op;
     public int $vendas_id;
     public int $destinatarios_id;
+    public float $total;
     public string $xml_path;
     public string $situacao;
     public ?string $created_at;

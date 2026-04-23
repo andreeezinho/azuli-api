@@ -3,7 +3,7 @@
 namespace App\Infra\Persistence\Traits;
 
 trait FindTrait {
-
+    //TODO: mudar para array para ser uma consulta com varios itens
     public function findBy(string $field, mixed $value){
         $stmt = $this->conn->prepare(
             "SELECT * FROM " . $this->model->getTable() . " WHERE $field = :$field"

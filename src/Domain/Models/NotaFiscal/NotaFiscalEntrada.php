@@ -18,6 +18,7 @@ class NotaFiscalEntrada {
     public int $gravada;
     public string $data_emissao;
     public int $emitentes_id;
+    public float $total;
     public string $xml_path;
     public ?string $created_at;
     public ?string $updated_at;

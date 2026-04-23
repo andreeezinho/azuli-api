@@ -132,6 +132,7 @@ class NotaFiscalController extends Controller {
             'gravada' => false,
             'data_emissao' => $nfe['nfeArray']['NFe']['infNFe']['ide']['dhEmi'],
             'emitentes_id' => $emitente->id,
+            'total' => (float)$nfe['nfeArray']['NFe']['infNFe']['total']['ICMSTot']['vNF'],
             'xml_path' => $nfe['xml']
         ]);
 

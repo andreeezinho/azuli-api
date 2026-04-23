@@ -322,6 +322,7 @@ class PdvController extends Controller {
         ], 201);
     }
 
+    //TODO: subtrair quantidade no estoque do produto após finalizar a venda
     public function finish(Request $request){
         $data = $request->all();
 
