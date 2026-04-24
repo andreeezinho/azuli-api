@@ -12,8 +12,11 @@ class Ipi {
 
     public int $id;
     public ?string $uuid;
+    public int $cEnq;
     public string $codigo;
     public float $tributacao;
+    public float $valor;
+    public float $vbc;
     public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
