@@ -99,12 +99,17 @@ class PdvController extends Controller {
             ], 422);
         }
 
-        //TODO: mudar findBy para codigo do produto ao inves do uuid
-        $produto = $this->produtoRepository->findBy('uuid', $data['produto_uuid']);
+        $produto = $this->produtoRepository->findBy('codigo', $data['produto_uuid']);
 
         if(is_null($produto)){
             return $this->respJson([
                 'message' => 'Produto não encontrado'
+            ], 422);
+        }
+
+        if($produto->estoque <= 0){
+            return $this->respJson([
+                'message' => 'Estoque do produto não disponível'
             ], 422);
         }
 
@@ -322,7 +327,6 @@ class PdvController extends Controller {
         ], 201);
     }
 
-    //TODO: subtrair quantidade no estoque do produto após finalizar a venda
     public function finish(Request $request){
         $data = $request->all();
 
@@ -353,6 +357,14 @@ class PdvController extends Controller {
         if($venda->troco > 0){
             return $this->respJson([
                 'message' => 'O valor da venda não foi totalmente pago'
+            ], 422);
+        }
+
+        $subtractProducts = $this->vendaProdutoRepository->subtractProductsStock($this->vendaProdutoRepository->all(['vendas_id' => $venda->id]));
+
+        if(is_null($subtractProducts)){
+            return $this->respJson([
+                'message' => 'Quantidade do produto maior que o estoque disponível'
             ], 422);
         }
 

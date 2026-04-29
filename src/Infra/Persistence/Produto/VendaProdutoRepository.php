@@ -4,15 +4,19 @@ namespace App\Infra\Persistence\Produto;
 
 use App\Domain\Models\Produto\VendaProduto;
 use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
+use App\Infra\Persistence\Produto\ProdutoRepository;
 use App\Infra\Persistence\BaseRepository;
+use App\Infra\Services\Log\LogService;
 
 class VendaProdutoRepository extends BaseRepository implements VendaProdutoRepositoryInterface {
 
     public static $className = VendaProduto::class;
+    protected $produtoRepository;
 
     public function __construct() {
         parent::__construct();
         $this->model = new VendaProduto();
+        $this->produtoRepository = new ProdutoRepository();
     }
 
     public function findProductsInSale(int $vendas_id){
@@ -75,6 +79,35 @@ class VendaProdutoRepository extends BaseRepository implements VendaProdutoRepos
         ]);
 
         return $delete;
+    }
+
+    public function subtractProductsStock(array $produtos){
+        try {
+            foreach($produtos as $prod){
+                $quant = $prod->quantidade;
+
+                $produto = $this->produtoRepository->findBy('id', $prod->produtos_id);
+
+                $subtract = (float)$produto->estoque - (float)$quant;
+
+                if($subtract < 0){
+                    return null;
+                }
+
+                $update = $this->produtoRepository->update(['estoque' => $subtract], $produto->id);
+
+                if(is_null($update)){
+                    return null;
+                }
+
+                continue;
+            }
+
+            return true;
+        } catch (\Throwable $th) {
+            LogService::logError($th->getMessage());
+            return null;
+        }
     }
 
 }

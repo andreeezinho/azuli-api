@@ -148,7 +148,7 @@ class NotaFiscalController extends Controller {
         ], 201);
     }
 
-    public function registerInvoiceProducts(Request $request, $uuid){
+    public function registerInvoiceProducts(Request $request, string $uuid){
         $nfe = $this->notaFiscalEntradaRepository->findBy('uuid', $uuid);
 
         if(is_null($nfe)){

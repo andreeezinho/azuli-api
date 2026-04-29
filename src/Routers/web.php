@@ -101,7 +101,7 @@ $router->create("DELETE", "/pdv/remove-all", [$pdvController, 'removeAllProducts
 $router->create("GET", "/pdv/{uuid}/cliente", [$pdvController, 'getClientFromSale'], null);
 $router->create("POST", "/pdv/vincular-cliente", [$pdvController, 'bindClientOnSale'], null);
 $router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkClientFromSale'], null);
-$router->create("PUT", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
+$router->create("POST", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
 $router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
 
 //empresas

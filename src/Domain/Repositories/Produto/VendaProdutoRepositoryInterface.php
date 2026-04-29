@@ -20,4 +20,6 @@ interface VendaProdutoRepositoryInterface {
 
     public function deleteAllProductsInSale(int $vendas_id);
 
+    public function subtractProductsStock(array $produtos);
+
 }
