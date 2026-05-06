@@ -29,11 +29,12 @@ class NFeService {
             "CSCid": ""
         }', Certificate::readPfx(file_get_contents(__DIR__.'/../../../../'.$_ENV['CERTIFICATE']), "123456"));
 
-        $this->tools->model('55');
         $this->xmlService = new XmlService();
     }
 
     public function getInvoice(string $chave){
+        $this->tools->model('55');
+
         try {
             $response  = $this->tools->sefazDownload($chave);
 
@@ -53,6 +54,44 @@ class NFeService {
             LogService::logError($e->getMessage());
             return null;
         }
+    }
+
+    public function generateXml(array $data, array $venda, ?array $destinatario, array $produtos, int $type = 55){
+        $this->tools->model((string)$type);
+
+        $nfe = new Make();
+        $stdInfNFe = new \stdClass();
+        $stdInfNFe->versao = '4.00';
+        $stdInfNFe->Id = null;
+        $stdInfNFe->pk_nItem = '';
+        $infNFe = $nfe->taginfNFe($stdInfNFe);
+
+        $stdIde = new \stdClass();
+        $stdIde->cUF = $_ENV['UF'];
+        $stdIde->cNF = random_int(10000000, 99999999);
+        $stdIde->natOp = $data['nat_op'];
+
+        $stdIde->mod = $type;
+        $stdIde->serie = 1;
+        $stdIde->nNF = $data['nNF'];
+        $stdIde->dhEmi = date("Y-m-d\TH:i:sP");
+        $stdIde->dhSaiEnt = date("Y-m-d\TH:i:sP");
+        $stdIde->tpNF = 1; 
+
+        $stdIde->idDest = $_ENV['UF'];
+		$stdIde->cMunFG = $_ENV['CODIGO'];
+		$stdIde->tpImp = 1;
+		$stdIde->tpEmis = 1;
+		$stdIde->cDV = 0;
+		$stdIde->tpAmb = $_ENV['AMBIENTE'];
+		$stdIde->finNFe = 1;
+		$stdIde->indFinal = 1;
+		$stdIde->indPres = 1;
+		$stdIde->indIntermed = 0;
+		$stdIde->procEmi = '0';
+		$stdIde->verProc = '3.10.31';
+		$tagide = $nfe->tagide($stdIde);
+
     }
 
 }

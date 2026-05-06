@@ -29,6 +29,9 @@ class PdvController extends Controller {
     protected $clienteRepository;
     protected $vendaClienteRepository;
     protected $nfeService;
+    protected $vendaTransformer;
+    protected $vendaProdutoTransformer;
+    protected $vendaClienteTransformer;
 
     public function __construct(
         UserRepositoryInterface $userRepository, 
@@ -39,7 +42,10 @@ class PdvController extends Controller {
         VendaPagamentoRepositoryInterface $vendaPagamentoRepository,
         ClienteRepositoryInterface $clienteRepository,
         VendaClienteRepositoryInterface $vendaClienteRepository,
-        NFeService $nfeService
+        NFeService $nfeService,
+        VendaTransformer $vendaTransformer,
+        VendaProdutoTransformer $vendaProdutoTransformer,
+        VendaClienteTransformer $vendaClienteTransformer
     ){
         $this->userRepository = $userRepository;
         $this->vendaRepository = $vendaRepository;
@@ -50,6 +56,9 @@ class PdvController extends Controller {
         $this->clienteRepository = $clienteRepository;
         $this->vendaClienteRepository = $vendaClienteRepository;
         $this->nfeService = $nfeService;
+        $this->vendaTransformer = $vendaTransformer;
+        $this->vendaProdutoTransformer = $vendaProdutoTransformer;
+        $this->vendaClienteTransformer = $vendaClienteTransformer;
     }
 
     public function index(Request $request){
@@ -73,8 +82,8 @@ class PdvController extends Controller {
             return $this->respJson([
                 'message' => 'Nova venda em aberto',
                 'data' => [
-                    'venda' => VendaTransformer::transform($create),
-                    'produtos' => VendaProdutoTransformer::transformArray($this->vendaProdutoRepository->findProductsInSale($create->id))
+                    'venda' => $this->vendaTransformer->transform($create),
+                    'produtos' => $this->vendaProdutoTransformer->transformArray($this->vendaProdutoRepository->findProductsInSale($create->id))
                 ]
             ]);
         }
@@ -82,8 +91,8 @@ class PdvController extends Controller {
         return $this->respJson([
             'message' => 'Venda em andamento',
             'data' => [
-                'venda' => VendaTransformer::transform($this->calculateTotal($lastSale->uuid, $lastSale->desconto)),
-                'produtos' => VendaProdutoTransformer::transformArray($this->vendaProdutoRepository->findProductsInSale($lastSale->id))
+                'venda' => $this->vendaTransformer->transform($this->calculateTotal($lastSale->uuid, $lastSale->desconto)),
+                'produtos' => $this->vendaProdutoTransformer->transformArray($this->vendaProdutoRepository->findProductsInSale($lastSale->id))
             ]
         ]);
     }
@@ -99,7 +108,7 @@ class PdvController extends Controller {
             ], 422);
         }
 
-        $produto = $this->produtoRepository->findBy('codigo', $data['produto_uuid']);
+        $produto = $this->produtoRepository->findBy('codigo', $data['codigo']);
 
         if(is_null($produto)){
             return $this->respJson([
@@ -219,7 +228,7 @@ class PdvController extends Controller {
 
         return $this->respJson([
             'message' => 'Cliente vinculado à venda',
-            'data' => VendaClienteTransformer::transform($cliente)
+            'data' => $this->vendaClienteTransformer->transform($cliente)
         ]);
     }
 
@@ -242,7 +251,7 @@ class PdvController extends Controller {
             ], 422);
         }
 
-        $findOldClient = $this->vendaClienteRepository->findClientInSale($venda->id)[0];
+        $findOldClient = $this->vendaClienteRepository->findClientInSale($venda->id)[0] ?? null;
 
         if(!is_null($findOldClient) || !empty($findOldClient)){
             $unlinkClient = $this->vendaClienteRepository->delete($findOldClient->id);

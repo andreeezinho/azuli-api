@@ -3,10 +3,17 @@
 namespace App\Http\Transformer\Cliente;
 
 use App\Domain\Models\Cliente\Cliente;
+use App\Http\Transformer\Endereco\EnderecoTransformer;
 
 class ClienteTransformer {
 
-    public static function transform(Cliente $data) : array {
+    protected $enderecoTransformer;
+
+    public function __construct(){
+        $this->enderecoTransformer = new EnderecoTransformer();
+    }
+
+    public function transform(Cliente $data) : array {
         return [
             'uuid' => $data->uuid,
             'nome' => $data->nome,
@@ -15,14 +22,14 @@ class ClienteTransformer {
             'telefone' => $data->telefone,
             'ie_rg' => $data->ie_rg,
             'contribuinte' => $data->contribuinte,
-            'enderecos_id' => $data->enderecos_id,
+            'endereco' => $this->enderecoTransformer->transform($data->endereco()),
             'ativo' => $data->ativo,
             'created_at' => $data->created_at,
             'updated_at' => $data->updated_at
         ];
     }
 
-    public static function transformArray(array $produtos) : array {
+    public function transformArray(array $produtos) : array {
         return array_map(function(Cliente $data) {
             return self::transform($data);
         }, $produtos);

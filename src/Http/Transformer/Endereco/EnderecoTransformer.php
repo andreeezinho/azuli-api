@@ -6,7 +6,7 @@ use App\Domain\Models\Endereco\Endereco;
 
 class EnderecoTransformer {
 
-    public static function transform(Endereco $data) : array {
+    public function transform(Endereco $data) : array {
         return [
             'uuid' => $data->uuid,
             'cep' => $data->cep,
@@ -23,7 +23,7 @@ class EnderecoTransformer {
         ];
     }
 
-    public static function transformArray(array $produtos) : array {
+    public function transformArray(array $produtos) : array {
         return array_map(function(Endereco $data) {
             return self::transform($data);
         }, $produtos);

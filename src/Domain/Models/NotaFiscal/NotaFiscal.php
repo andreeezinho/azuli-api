@@ -3,6 +3,8 @@
 namespace App\Domain\Models\NotaFiscal;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Destinatario\DestinatarioRepository;
+use App\Infra\Persistence\Venda\VendaRepository;
 
 class NotaFiscal {
 
@@ -22,6 +24,14 @@ class NotaFiscal {
     public string $situacao;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function destinatario(){
+        return $this->belongsTo(DestinatarioRepository::class, $this->destinatarios_id);
+    }
+
+    public function venda(){
+        return $this->belongsTo(VendaRepository::class, $this->vendas_id);
+    }
 
     public function create(array $data) : NotaFiscal {
         $notaFiscal = new NotaFiscal();

@@ -3,10 +3,17 @@
 namespace App\Http\Transformer\Empresa;
 
 use App\Domain\Models\Empresa\Empresa;
+use App\Http\Transformer\Endereco\EnderecoTransformer;
 
 class EmpresaTransformer {
 
-    public static function transform(Empresa $data) : array {
+    protected $enderecoTransformer;
+
+    public function __construct(){
+        $this->enderecoTransformer = new EnderecoTransformer();
+    }
+
+    public function transform(Empresa $data) : array {
         return [
             'uuid' => $data->uuid,
             'razao_social' => $data->razao_social,
@@ -14,14 +21,14 @@ class EmpresaTransformer {
             'documento' => $data->documento,
             'ie_rg' => $data->ie_rg,
             'num_serie_nfe' => $data->num_serie_nfe,
-            'enderecos_id' => $data->enderecos_id,
+            'endereco' => $this->enderecoTransformer->transform($data->endereco()),
             'ativo' => $data->ativo,
             'created_at' => $data->created_at,
             'updated_at' => $data->updated_at
         ];
     }
 
-    public static function transformArray(array $produtos) : array {
+    public function transformArray(array $produtos) : array {
         return array_map(function(Empresa $data) {
             return self::transform($data);
         }, $produtos);

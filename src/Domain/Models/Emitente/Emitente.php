@@ -3,6 +3,8 @@
 namespace App\Domain\Models\Emitente;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Domain\Models\Empresa\Empresa;
+use App\Infra\Persistence\Empresa\EmpresaRepository;
 
 class Emitente {
 
@@ -16,6 +18,10 @@ class Emitente {
     public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function empresa(){
+        return $this->belongsTo(EmpresaRepository::class, $this->empresas_id);
+    }
 
     public function create(array $data) : Emitente {
         $emitente = new Emitente();

@@ -16,18 +16,21 @@ class TributacaoController extends Controller {
     protected $icmsRepository;
     protected $ipiRepository;
     protected $pisRepository;
+    protected $tributacaoTransformer;
 
     public function __construct(
         CofinsRepositoryInterface $cofinsRepository,
         IcmsRepositoryInterface $icmsRepository,
         IpiRepositoryInterface $ipiRepository,
-        PisRepositoryInterface $pisRepository
+        PisRepositoryInterface $pisRepository,
+        TributacaoTransformer $tributacaoTransformer
     ){
         parent::__construct();
         $this->cofinsRepository = $cofinsRepository;
         $this->icmsRepository = $icmsRepository;
         $this->ipiRepository = $ipiRepository;
         $this->pisRepository = $pisRepository;
+        $this->tributacaoTransformer = $tributacaoTransformer;
     }
 
     public function index(Request $request){
@@ -41,7 +44,7 @@ class TributacaoController extends Controller {
 
         return $this->respJson([
             'message' => 'Tributações listadas',
-            'data' => TributacaoTransformer::transformArray($tributacoes)
+            'data' => $this->tributacaoTransformer->transformArray($tributacoes)
         ]);
     }
 
@@ -73,7 +76,7 @@ class TributacaoController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => TributacaoTransformer::transform($tributacao)
+            'data' => $this->tributacaoTransformer->transform($tributacao)
         ], 201);
     }
 
@@ -113,7 +116,7 @@ class TributacaoController extends Controller {
 
         return $this->respJson([
             'message' => 'Sucesso ao atualizar tributação',
-            'data' => TributacaoTransformer::transform($tributacao)
+            'data' => $this->tributacaoTransformer->transform($tributacao)
         ], 201);
     }
 

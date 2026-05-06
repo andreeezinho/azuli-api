@@ -6,7 +6,7 @@ use App\Domain\Models\GrupoProduto\GrupoProduto;
 
 class GrupoProdutoTransformer {
 
-    public static function transform(GrupoProduto $data) : array {
+    public function transform(GrupoProduto $data) : array {
         return [
             'uuid' => $data->uuid,
             'nome' => $data->nome,
@@ -16,7 +16,7 @@ class GrupoProdutoTransformer {
         ];
     }
 
-    public static function transformArray(array $produtos) : array {
+    public function transformArray(array $produtos) : array {
         return array_map(function(GrupoProduto $data) {
             return self::transform($data);
         }, $produtos);

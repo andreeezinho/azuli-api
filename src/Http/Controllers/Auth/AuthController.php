@@ -17,12 +17,14 @@ class AuthController extends Controller {
     protected $googleAuthService;
     protected $fileService;
     protected $emailService;
+    protected $userTransformer;
 
-    public function __construct(UserRepositoryInterface $userRepository, GoogleAuthService $googleAuthService, EmailService $emailService){
+    public function __construct(UserRepositoryInterface $userRepository, GoogleAuthService $googleAuthService, EmailService $emailService, UserTransformer $userTransformer){
         parent::__construct();
         $this->userRepository = $userRepository;
         $this->googleAuthService = $googleAuthService;
         $this->emailService = $emailService;
+        $this->userTransformer = $userTransformer;
     }
 
     public function login(Request $request){
@@ -51,7 +53,7 @@ class AuthController extends Controller {
             ]);
         }
 
-        $user = UserTransformer::transform($user);
+        $user = $this->userTransformer->transform($user);
 
         $token = JWT::generateToken((array)$user, 30600);
         
@@ -86,7 +88,7 @@ class AuthController extends Controller {
         $user = $this->userRepository->findBy('email', $this->googleAuthService->getClientData()->email);
 
         if(!is_null($user)){
-            $user = UserTransformer::transform($user);
+            $user = $this->userTransformer->transform($user);
 
             $token = JWT::generateToken((array)$user, 30600);
             
@@ -112,7 +114,7 @@ class AuthController extends Controller {
             ], 500);
         }
 
-        $user = UserTransformer::transform($user);
+        $user = $this->userTransformer->transform($user);
 
         $token = JWT::generateToken((array)$user, 30600);
         
@@ -143,7 +145,7 @@ class AuthController extends Controller {
             ], 404);
         }
 
-        $user = UserTransformer::transform($user);
+        $user = $this->userTransformer->transform($user);
 
         return $this->respJson([
             'data' => $user

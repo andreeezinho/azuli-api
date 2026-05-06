@@ -9,6 +9,7 @@ use App\Domain\Repositories\NotaFiscal\NotaFiscalRepositoryInterface;
 use App\Domain\Repositories\NotaFiscal\NotaFiscalEntradaRepositoryInterface;
 use App\Domain\Repositories\Empresa\EmpresaRepositoryInterface;
 use App\Domain\Repositories\Venda\VendaRepositoryInterface;
+use App\Domain\Repositories\Produto\VendaProdutoRepositoryInterface;
 use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
 use App\Domain\Repositories\Destinatario\DestinatarioRepositoryInterface;
 use App\Domain\Repositories\Emitente\EmitenteRepositoryInterface;
@@ -22,39 +23,48 @@ class NotaFiscalController extends Controller {
     protected $notaFiscalEntradaRepository;
     protected $empresaRepository;
     protected $vendaRepository;
+    protected $vendaProdutoRepository;
     protected $produtoRepository;
     protected $destinatarioRepository;
     protected $emitenteRepository;
     protected $enderecoRepository;
     protected $nfeService;
     protected $xmlService;
+    protected $notaFiscalTransformer;
 
     public function __construct(
         NotaFiscalRepositoryInterface $notaFiscalRepository,
         NotaFiscalEntradaRepositoryInterface $notaFiscalEntradaRepository,
         EmpresaRepositoryInterface $empresaRepository,
         VendaRepositoryInterface $vendaRepository,
+        VendaProdutoRepositoryInterface $vendaProdutoRepository,
         ProdutoRepositoryInterface $produtoRepository,
         DestinatarioRepositoryInterface $destinatarioRepository,
         EmitenteRepositoryInterface $emitenteRepository,
         EnderecoRepositoryInterface $enderecoRepository,
         NFeService $nfeService,
-        XmlService $xmlService
+        XmlService $xmlService,
+        NotaFiscalEntradaTransformer $notaFiscalTransformer
     ){
         $this->notaFiscalRepository = $notaFiscalRepository;
         $this->notaFiscalEntradaRepository = $notaFiscalEntradaRepository;
         $this->empresaRepository = $empresaRepository;
         $this->vendaRepository = $vendaRepository;
+        $this->vendaProdutoRepository = $vendaProdutoRepository;
         $this->produtoRepository = $produtoRepository;
         $this->destinatarioRepository = $destinatarioRepository;
         $this->emitenteRepository = $emitenteRepository;
         $this->enderecoRepository = $enderecoRepository;
         $this->nfeService = $nfeService;
         $this->xmlService = $xmlService;
+        $this->notaFiscalTransformer = $notaFiscalTransformer;
     }
 
-    // TODO: service do notafiscal com os metodos utilizando sdk do SPED-NFE
-    // TODO: documentação demonstrativas para notafiscal
+    public function teste(Request $request){
+        return $this->respJson([
+            'data' => $this->notaFiscalRepository->getLastNfeNumber()
+        ]);
+    }
 
     public function getInvoiceByKey(Request $request){
         $data = $request->all();
@@ -75,7 +85,7 @@ class NotaFiscalController extends Controller {
         if(!is_null($findNfe)){
             return $this->respJson([
                 'message' => 'NFe encontrada',
-                'data' => NotaFiscalEntradaTransformer::transform($findNfe)  
+                'data' => $this->notaFiscalTransformer->transform($findNfe)  
             ], 200);
         }
 
@@ -95,7 +105,7 @@ class NotaFiscalController extends Controller {
                 'nome_fantasia' => $nfe['nfeArray']['NFe']['infNFe']['emit']['xFant'],
                 'documento' => $nfe['nfeArray']['NFe']['infNFe']['emit']['CNPJ'],
                 'ie_rg' => $nfe['nfeArray']['NFe']['infNFe']['emit']['IE'],
-                'num_serie_nfe' => 1, //TODO: make method $this->lastNFeNumber()
+                'num_serie_nfe' => 1, 
                 'enderecos_id' => $this->enderecoRepository->create([
                     'cep' => $nfe['nfeArray']['NFe']['infNFe']['emit']['enderEmit']['CEP'],
                     'uf' => $nfe['nfeArray']['NFe']['infNFe']['emit']['enderEmit']['UF'],
@@ -144,7 +154,7 @@ class NotaFiscalController extends Controller {
 
         return $this->respJson([
             'message' => 'NFe encontrada',
-            'data' => NotaFiscalEntradaTransformer::transform($create)
+            'data' => $this->notaFiscalTransformer->transform($create)
         ], 201);
     }
 
@@ -190,6 +200,45 @@ class NotaFiscalController extends Controller {
         return $this->respJson([
             'message' => 'Produtos gravados com sucesso'
         ], 201);
+    }
+
+    public function generateNFe(Request $request){
+        $data = $request->all();
+
+        $validate = $this->validate($data, [
+            'venda_uuid' => 'required',
+            'nat_op' => 'required|string'
+        ]);
+
+        if(is_null($validate)){
+            return $this->respJson([
+                'message' => 'Dados inválidos',
+                'errors' => $this->getErrors()
+            ], 422);
+        }
+
+        $venda = $this->vendaRepository->findBy('uuid', $data['venda_uuid']);
+
+        if(is_null($venda)){
+            return $this->respJson([
+                'message' => 'Venda não encontrada'
+            ], 422);
+        }
+
+        $produtos = $this->vendaProdutoRepository->findProductsInSale($venda->id);
+
+        $destinatario = $this->destinatarioRepository->findBy('uuid', $data['destinatario_uuid']);
+
+        $data = array_merge($data, ['nNF' => $this->notaFiscalRepository->getLastNfeNumber() + 1]);
+
+        $generate = $this->nfeService
+            ->generateXml(
+                $data, 
+                $venda,
+                $destinatario,
+                $produtos,
+                is_null($destinatario) ? 65 : 55
+            );
     }
 
 }

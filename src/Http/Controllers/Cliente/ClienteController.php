@@ -10,9 +10,11 @@ use App\Domain\Repositories\Cliente\ClienteRepositoryInterface;
 class ClienteController extends Controller {
 
     protected $clienteRepository;
+    protected $clienteTransformer;
 
-    public function __construct(ClienteRepositoryInterface $clienteRepository){
+    public function __construct(ClienteRepositoryInterface $clienteRepository, ClienteTransformer $clienteTransformer){
         $this->clienteRepository = $clienteRepository;
+        $this->clienteTransformer = $clienteTransformer;
     }
 
     public function index(Request $request){
@@ -22,7 +24,7 @@ class ClienteController extends Controller {
 
         return $this->respJson([
             'message' => 'Clientes listados',
-            'data' => ClienteTransformer::transformArray($clientes)
+            'data' => $this->clienteTransformer->transformArray($clientes)
         ]);
     }
 
@@ -56,7 +58,7 @@ class ClienteController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => ClienteTransformer::transform($cliente)
+            'data' => $this->clienteTransformer->transform($cliente)
         ], 201);
     }
 
@@ -98,7 +100,7 @@ class ClienteController extends Controller {
 
         return $this->respJson([
             'message' => 'Sucesso ao atualizar cliente',
-            'data' => ClienteTransformer::transform($cliente)
+            'data' => $this->clienteTransformer->transform($cliente)
         ], 201);
     }
 

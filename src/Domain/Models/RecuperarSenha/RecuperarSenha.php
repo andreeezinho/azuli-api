@@ -3,6 +3,7 @@
 namespace App\Domain\Models\RecuperarSenha;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\User\UserRepository;
 
 class RecuperarSenha {
 
@@ -17,6 +18,10 @@ class RecuperarSenha {
     public ?string $expires_at;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function usuario(){
+        return $this->belongsTo(UserRepository::class, $this->usuarios_id);
+    }
 
     public function create(array $data) : RecuperarSenha {
         $recuperarSenha = new RecuperarSenha();

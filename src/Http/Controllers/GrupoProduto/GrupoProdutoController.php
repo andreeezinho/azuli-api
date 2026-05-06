@@ -10,10 +10,12 @@ use App\Domain\Repositories\GrupoProduto\GrupoProdutoRepositoryInterface;
 class GrupoProdutoController extends Controller {
 
     protected $grupoProdutoRepository;
+    protected $grupoProdutoTransformer;
 
-    public function __construct(GrupoProdutoRepositoryInterface $grupoProdutoRepository){
+    public function __construct(GrupoProdutoRepositoryInterface $grupoProdutoRepository, GrupoProdutoTransformer $grupoProdutoTransformer){
         parent::__construct();
         $this->grupoProdutoRepository = $grupoProdutoRepository;
+        $this->grupoProdutoTransformer = $grupoProdutoTransformer;
     }
 
     public function index(Request $request){
@@ -23,7 +25,7 @@ class GrupoProdutoController extends Controller {
 
         return $this->respJson([
             'message' => 'Grupos listados',
-            'data' => GrupoProdutoTransformer::transformArray($grupos)
+            'data' => $this->grupoProdutoTransformer->transformArray($grupos)
         ]);
     }
 
@@ -52,7 +54,7 @@ class GrupoProdutoController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => GrupoProdutoTransformer::transform($grupo)
+            'data' => $this->grupoProdutoTransformer->transform($grupo)
         ], 201);
     }
 
@@ -89,7 +91,7 @@ class GrupoProdutoController extends Controller {
 
         return $this->respJson([
             'message' => 'Sucesso ao atualizar grupo de produto',
-            'data' => GrupoProdutoTransformer::transform($grupo)
+            'data' => $this->grupoProdutoTransformer->transform($grupo)
         ], 201);
     }
 

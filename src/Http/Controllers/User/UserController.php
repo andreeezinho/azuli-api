@@ -15,12 +15,14 @@ class UserController extends Controller {
     protected $userRepository;
     protected $fileService;
     protected $emailService;
+    protected $userTransformer;
 
-    public function __construct(UserRepositoryInterface $userRepository, FileService $fileService, EmailService $emailService){
+    public function __construct(UserRepositoryInterface $userRepository, FileService $fileService, EmailService $emailService, UserTransformer $userTransformer){
         parent::__construct();
         $this->userRepository = $userRepository;
         $this->fileService = $fileService;
         $this->emailService = $emailService;
+        $this->userTransformer = $userTransformer;
     }
 
     public function index(Request $request){
@@ -30,7 +32,7 @@ class UserController extends Controller {
         
         return $this->respJson([
             'message' => "Usuários listados",
-            'data' => UserTransformer::transformArray($users)
+            'data' => $this->userTransformer->transformArray($users)
         ]);
     }
 
@@ -64,7 +66,7 @@ class UserController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => UserTransformer::transform($user)
+            'data' => $this->userTransformer->transform($user)
         ], 201);
     }
 
@@ -105,7 +107,7 @@ class UserController extends Controller {
         
         return $this->respJson([
             'message' => 'Sucesso ao atualizar o usuário',
-            'data' => UserTransformer::transform($update)
+            'data' => $this->userTransformer->transform($update)
         ], 201);
     }
 

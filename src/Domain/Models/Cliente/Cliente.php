@@ -3,6 +3,7 @@
 namespace App\Domain\Models\Cliente;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Endereco\EnderecoRepository;
 
 class Cliente { 
 
@@ -22,6 +23,10 @@ class Cliente {
     public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function endereco(){
+        return $this->belongsTo(EnderecoRepository::class, $this->enderecos_id);
+    }
 
     public function create(array $data) : Cliente {
         $cliente = new Cliente();

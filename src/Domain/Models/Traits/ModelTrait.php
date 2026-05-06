@@ -28,6 +28,14 @@ trait ModelTrait {
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
+    protected function belongsTo(string $class, int $key){
+        if(empty($key)){
+            return null;
+        }
+
+        return (new $class())->findBy('id', $key);
+    }
+
     function getTable() : string {
         return self::TABLE;
     }

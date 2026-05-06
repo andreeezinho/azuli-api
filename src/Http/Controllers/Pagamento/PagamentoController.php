@@ -10,10 +10,12 @@ use App\Domain\Repositories\Pagamento\PagamentoRepositoryInterface;
 class PagamentoController extends Controller {
 
     protected $pagamentoRepository;
+    protected $pagamentoTransformer;
 
-    public function __construct(PagamentoRepositoryInterface $pagamentoRepository){
+    public function __construct(PagamentoRepositoryInterface $pagamentoRepository, PagamentoTransformer $pagamentoTransformer){
         parent::__construct();
         $this->pagamentoRepository = $pagamentoRepository;
+        $this->pagamentoTransformer = $pagamentoTransformer;
     }
 
     public function index(Request $request){
@@ -23,7 +25,7 @@ class PagamentoController extends Controller {
 
         return $this->respJson([
             'message' => 'Formas de pagamento listadas',
-            'data' => PagamentoTransformer::transformArray($grupos)
+            'data' => $this->pagamentoTransformer->transformArray($grupos)
         ]);
     }
 
@@ -52,7 +54,7 @@ class PagamentoController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => PagamentoTransformer::transform($grupo)
+            'data' => $this->pagamentoTransformer->transform($grupo)
         ], 201);
     }
 
@@ -89,7 +91,7 @@ class PagamentoController extends Controller {
 
         return $this->respJson([
             'message' => 'Sucesso ao atualizar forma de pagamento',
-            'data' => PagamentoTransformer::transform($grupo)
+            'data' => $this->pagamentoTransformer->transform($grupo)
         ], 201);
     }
 

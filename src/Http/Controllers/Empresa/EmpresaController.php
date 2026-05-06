@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Empresa;
 use App\Http\Controllers\Controller;
 use App\Http\Request\Request;
 use App\Http\Transformer\Empresa\EmpresaTransformer;
-use App\Domain\Models\Empresa\Empresa;
 use App\Domain\Repositories\Empresa\EmpresaRepositoryInterface;
 
 class EmpresaController extends Controller {
 
     protected $empresaRepository;
+    protected $empresaTransformer;
 
-    public function __construct(EmpresaRepositoryInterface $empresaRepository){
+    public function __construct(EmpresaRepositoryInterface $empresaRepository, EmpresaTransformer $empresaTransformer){
         $this->empresaRepository = $empresaRepository;
+        $this->empresaTransformer = $empresaTransformer;
     }
 
     public function index(Request $request){
@@ -23,7 +24,7 @@ class EmpresaController extends Controller {
 
         return $this->respJson([
             'message' => 'Empresas listados',
-            'data' => EmpresaTransformer::transformArray($empresas)
+            'data' => $this->empresaTransformer->transformArray($empresas)
         ]);
     }
 
@@ -56,7 +57,7 @@ class EmpresaController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => empresaTransformer::transform($empresa)
+            'data' => $this->empresaTransformer->transform($empresa)
         ], 201);
     }
 
@@ -97,7 +98,7 @@ class EmpresaController extends Controller {
 
         return $this->respJson([
             'message' => 'Sucesso ao atualizar empresa',
-            'data' => empresaTransformer::transform($empresa)
+            'data' => $this->empresaTransformer->transform($empresa)
         ], 201);
     }
 

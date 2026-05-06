@@ -18,12 +18,12 @@ function totalPrice(?array $products, float $discount = 0) : float {
 
     foreach($products as $product){
         if(isset($product->quantidade)){
-            $total += $product->preco * $product->quantidade;
+            $total += $product->produto()->preco * $product->quantidade;
         }
 
 
         if(!isset($product->quantidade)){
-            $total = $total + $product->preco;
+            $total = $total + $product->produto()->preco;
         }
     }
 

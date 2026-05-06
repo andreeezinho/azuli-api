@@ -21,17 +21,11 @@ class VendaProdutoRepository extends BaseRepository implements VendaProdutoRepos
 
     public function findProductsInSale(int $vendas_id){
         $stmt = $this->conn->prepare(
-            "SELECT vp.*,
-                p.uuid as uuidProduto, p.nome as nome, p.codigo as codigo, p.preco as preco, p.estoque as estoque, p.tipo as tipo, p.grupo_produto_id as grupo_produto_id, p.ativo as ativo
-            FROM " . $this->model->getTable() . " vp
-            JOIN vendas v
-                ON vendas_id = v.id
-            JOIN produtos p
-                ON produtos_id = p.id
+            "SELECT * FROM " . $this->model->getTable() . "
             WHERE
-                v.id = :vendas_id
+                vendas_id = :vendas_id
             ORDER BY 
-                vp.created_at ASC
+                created_at ASC
         ");
 
         $stmt->execute([":vendas_id" => $vendas_id]);

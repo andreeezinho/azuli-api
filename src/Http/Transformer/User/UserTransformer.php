@@ -6,7 +6,7 @@ use App\Domain\Models\User\User;
 
 class UserTransformer {
 
-    public static function transform(User $data) : array {
+    public function transform(User $data) : array {
         return [
             'uuid' => $data->uuid,
             'usuario' => $data->usuario,
@@ -22,7 +22,7 @@ class UserTransformer {
         ];
     }
 
-    public static function transformArray(array $users) : array {
+    public function transformArray(array $users) : array {
         return array_map(function(User $data) {
             return self::transform($data);
         }, $users);

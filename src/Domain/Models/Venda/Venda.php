@@ -3,6 +3,7 @@
 namespace App\Domain\Models\Venda;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\User\UserRepository;
 
 class Venda {
 
@@ -19,6 +20,10 @@ class Venda {
     public string $situacao;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function usuario(){
+        return $this->belongsTo(UserRepository::class, $this->usuarios_id);
+    }
 
     public function create(array $data) : Venda {
         $venda = new Venda();

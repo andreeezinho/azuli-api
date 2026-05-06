@@ -3,6 +3,8 @@
 namespace App\Domain\Models\Pagamento;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Pagamento\PagamentoRepository;
+use App\Infra\Persistence\Venda\VendaRepository;
 
 class VendaPagamento {
 
@@ -17,6 +19,14 @@ class VendaPagamento {
     public int $pagamento_id;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function venda(){
+        return $this->belongsTo(VendaRepository::class, $this->vendas_id);
+    }
+
+    public function pagamento(){
+        return $this->belongsTo(PagamentoRepository::class, $this->pagamento_id);
+    }
 
     public function create(array $data) : VendaPagamento {
         $vendaPagamento = new VendaPagamento();

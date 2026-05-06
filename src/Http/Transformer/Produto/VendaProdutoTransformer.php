@@ -6,28 +6,27 @@ use App\Domain\Models\Produto\VendaProduto;
 
 class VendaProdutoTransformer {
 
-    public static function transform(?VendaProduto $data) : array {
+    protected $produtoTransformer;
+
+    public function __construct(){
+        $this->produtoTransformer = new ProdutoTransformer();
+    }
+
+    public function transform(?VendaProduto $data) : array {
         if(is_null($data)){
             return [];
         }
 
         return [
             'uuid' => $data->uuid,
-            'uuidProduto' => $data->uuidProduto,
-            'nome' => $data->nome,
-            'codigo' => $data->codigo,
-            'preco' => $data->preco,
             'quantidade' => $data->quantidade,
-            'estoque' => $data->estoque,
-            'tipo' => $data->tipo,
-            'grupo_produto_id' => $data->grupo_produto_id,
-            'ativo' => $data->ativo,
+            'produto' => $this->produtoTransformer->transform($data->produto()),
             'created_at' => $data->created_at,
             'updated_at' => $data->updated_at
         ];
     }
 
-    public static function transformArray(?array $produtos) : array {
+    public function transformArray(?array $produtos) : array {
         if(is_null($produtos)){
             return [];
         }

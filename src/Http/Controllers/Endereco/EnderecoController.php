@@ -10,9 +10,11 @@ use App\Domain\Repositories\Endereco\EnderecoRepositoryInterface;
 class EnderecoController extends Controller {
 
     protected $enderecoRepository;
+    protected $enderecoTransformer;
 
-    public function __construct(EnderecoRepositoryInterface $enderecoRepository){
+    public function __construct(EnderecoRepositoryInterface $enderecoRepository, EnderecoTransformer $enderecoTransformer){
         $this->enderecoRepository = $enderecoRepository;
+        $this->enderecoTransformer = $enderecoTransformer;
     }
 
     public function index(Request $request){
@@ -22,7 +24,7 @@ class EnderecoController extends Controller {
 
         return $this->respJson([
             'message' => 'Endereços listados',
-            'data' => EnderecoTransformer::transformArray($enderecos)
+            'data' => $this->enderecoTransformer->transformArray($enderecos)
         ]);
     }
 
@@ -57,7 +59,7 @@ class EnderecoController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => EnderecoTransformer::transform($endereco)
+            'data' => $this->enderecoTransformer->transform($endereco)
         ], 201);
     }
 
@@ -100,7 +102,7 @@ class EnderecoController extends Controller {
 
         return $this->respJson([
             'message' => 'Sucesso ao atualizar endereço',
-            'data' => EnderecoTransformer::transform($endereco)
+            'data' => $this->enderecoTransformer->transform($endereco)
         ], 201);
     }
 

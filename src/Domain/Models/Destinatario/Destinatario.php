@@ -3,6 +3,7 @@
 namespace App\Domain\Models\Destinatario;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Empresa\EmpresaRepository;
 
 class Destinatario {
 
@@ -16,6 +17,10 @@ class Destinatario {
     public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function empresa(){
+        return $this->belongsTo(EmpresaRepository::class, $this->empresas_id);
+    }
 
     public function create(array $data) : Destinatario {
         $destinatario = new Destinatario();

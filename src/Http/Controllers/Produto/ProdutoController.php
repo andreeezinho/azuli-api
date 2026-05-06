@@ -10,10 +10,12 @@ use App\Http\Transformer\Produto\ProdutoTransformer;
 class ProdutoController extends Controller {
 
     protected $produtoRepository;
+    protected $produtoTransformer;
 
-    public function __construct(ProdutoRepositoryInterface $produtoRepository){
+    public function __construct(ProdutoRepositoryInterface $produtoRepository, ProdutoTransformer $produtoTransformer){
         parent::__construct();
         $this->produtoRepository = $produtoRepository;
+        $this->produtoTransformer = $produtoTransformer;
     }
 
     public function index(Request $request){
@@ -23,7 +25,7 @@ class ProdutoController extends Controller {
 
         return $this->respJson([
             'message' => 'Produtos listados',
-            'data' => ProdutoTransformer::transformArray($produtos)
+            'data' => $this->produtoTransformer->transformArray($produtos)
         ]);
     }
 
@@ -65,7 +67,7 @@ class ProdutoController extends Controller {
 
         return $this->respJson([
             'message' => 'Cadastro realizado com sucesso',
-            'data' => ProdutoTransformer::transform($produto)
+            'data' => $this->produtoTransformer->transform($produto)
         ], 201);
     }
 
@@ -115,7 +117,7 @@ class ProdutoController extends Controller {
 
         return $this->respJson([
             'message' => 'Produto atualizado com sucesso',
-            'data' => ProdutoTransformer::transform($produto)
+            'data' => $this->produtoTransformer->transform($produto)
         ], 201);
     }
 

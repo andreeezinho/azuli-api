@@ -3,6 +3,7 @@
 namespace App\Domain\Models\NotaFiscal;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Emitente\EmitenteRepository;
 
 class NotaFiscalEntrada {
 
@@ -22,6 +23,10 @@ class NotaFiscalEntrada {
     public string $xml_path;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function emitente(){
+        return $this->belongsTo(EmitenteRepository::class, $this->emitentes_id);
+    }
 
     public function create(array $data) : NotaFiscalEntrada {
         $notaFiscal = new NotaFiscalEntrada();

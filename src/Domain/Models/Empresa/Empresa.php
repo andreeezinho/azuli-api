@@ -3,6 +3,7 @@
 namespace App\Domain\Models\Empresa;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Endereco\EnderecoRepository;
 
 class Empresa {
 
@@ -21,6 +22,10 @@ class Empresa {
     public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function endereco(){
+        return $this->belongsTo(EnderecoRepository::class, $this->enderecos_id);
+    }
 
     public function create(array $data) : Empresa {
         $empresa = new Empresa();

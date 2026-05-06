@@ -15,4 +15,21 @@ class NotaFiscalRepository extends BaseRepository implements NotaFiscalRepositor
         $this->model = new NotaFiscal();
     }
 
+    public function getLastNfeNumber(){
+        $stmt = $this->conn->prepare(
+            "SELECT num_nf FROM " . $this->model->getTable() . " ORDER BY id DESC LIMIT 1"
+        );
+
+        $stmt->execute([]);
+
+        $stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, static::$className);
+        $result = $stmt->fetch();
+
+        if(empty($result)){
+            return null;
+        }
+
+        return $result->num_nf;
+    }
+
 }

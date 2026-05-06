@@ -3,6 +3,8 @@
 namespace App\Domain\Models\Produto;
 
 use App\Domain\Models\Traits\ModelTrait;
+use App\Infra\Persistence\Produto\ProdutoRepository;
+use App\Infra\Persistence\Venda\VendaRepository;
 
 class VendaProduto {
 
@@ -15,25 +17,16 @@ class VendaProduto {
     public float $quantidade;
     public int $vendas_id;
     public int $produtos_id;
-    public string $uuidProduto;
-    public string $nome;
-    public string $codigo;
-    public float $preco;
-    public float $estoque;
-    public string $tipo;
-    public float $quant_entrada;
-    public float $quant_saida;
-    public int $grupo_produto_id;
-    public int $icms_id;
-    public int $ipi_id;
-    public int $pis_id;
-    public int $cofins_id;
-    public int $cfop;
-    public ?int $ncm;
-    public ?int $cest;
-    public int $ativo;
     public ?string $created_at;
     public ?string $updated_at;
+
+    public function venda(){
+        return $this->belongsTo(VendaRepository::class, $this->vendas_id);
+    }
+
+    public function produto(){
+        return $this->belongsTo(ProdutoRepository::class, $this->produtos_id);
+    }
 
     public function create(array $data) : VendaProduto {
         $vendaProduto = new VendaProduto();

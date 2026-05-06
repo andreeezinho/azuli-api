@@ -13,5 +13,7 @@ interface NotaFiscalRepositoryInterface {
     public function delete(int $id);
 
     public function findBy(string $field, mixed $value);
+    
+    public function getLastNfeNumber();
 
 }
