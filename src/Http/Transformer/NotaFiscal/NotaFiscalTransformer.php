@@ -23,6 +23,7 @@ class NotaFiscalTransformer {
             'destinatario' => $this->destinatarioTransformer->transform($data->destinatario()) ?? null,
             'total' => $data->total,
             'xml_path' => $data->xml_path,
+            'num_evento' => $data->num_evento,
             'created_at' => $data->created_at,
             'updated_at' => $data->updated_at
         ];

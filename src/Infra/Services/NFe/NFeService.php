@@ -365,4 +365,78 @@ class NFeService {
         }
     }
 
+    public function correct(string $nfeKey, string $justification, int $numSeq){
+        try{
+            $response = $this->tools->sefazCCe($nfeKey, $justification, $numSeq + 1);
+
+            $stdCl = new Standardize($response);
+            $std = $stdCl->toStd($response);
+            $stdArr = $stdCl->toArray($response);
+
+            if($std->cStat != 128){
+                return [
+                    'erro' => $stdArr
+                ];
+            }else{
+                $cStat = $std->retEvento->infEvento->cStat;
+
+                if($cStat == '135' || $cStat == '136'){
+                    $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
+                    $xml = $this->xmlService->saveXml($xml, false);
+                    
+                    return [
+                        'xml' => $xml,
+                        'seqEvent' => $numSeq + 1
+                    ];
+                }else{
+                    return [
+                        'erro' => 'Não foi possível gerar novo xml'
+                    ];
+                }
+            }
+
+        }catch(\Exception $e){
+            LogService::logError('Erro ao gerar carta de correção da NFe: ' . $e->getMessage());
+            return $e->getMessage();
+        }
+    }
+
+    public function cancel(string $chave, string $justification){
+        try{
+            $respChave = $this->tools->sefazConsultaChave($chave);
+            $stdCl = new Standardize($respChave);
+            $nProt = $stdCl->toArray()['protNFe']['infProt']['nProt'];
+
+            $response = $this->tools->sefazCancela($chave, $justification, $nProt);
+
+            $stdCl = new Standardize($response);
+            $std = $stdCl->toStd();
+            $arr = $stdCl->toArray();
+
+            if($std->cStat != 128){
+                return [
+                    'erro' => $arr
+                ];
+            }else{
+                $cStat = $std->retEvento->infEvento->cStat;
+
+                if($cStat == '101' || $cStat == '135' || $cStat == '155'){
+                    $xml = Complements::toAuthorize($this->tools->lastRequest, $response);
+                    $xml = $this->xmlService->saveXml($xml, false);
+                    
+                    return [
+                        'xml' => $xml
+                    ];
+                }else{
+                    return [
+                        'erro' => 'Não foi possível gerar novo xml do cancelamento'
+                    ];
+                }
+            }
+        }catch(\Exception $e){
+            LogService::logError('Erro ao gerar cancelamento da NFe: ' . $e->getMessage());
+            return $e->getMessage();
+        }
+    }
+
 }

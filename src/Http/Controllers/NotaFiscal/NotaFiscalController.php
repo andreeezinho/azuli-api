@@ -66,12 +66,6 @@ class NotaFiscalController extends Controller {
         $this->notaFiscalEntradaTransformer = $notaFiscalEntradaTransformer;
     }
 
-    public function teste(Request $request){
-        return $this->respJson([
-            'data' => $this->notaFiscalRepository->getLastNfeNumber()
-        ]);
-    }
-
     public function getInvoiceByKey(Request $request){
         $data = $request->all();
 
@@ -303,6 +297,107 @@ class NotaFiscalController extends Controller {
             LogService::logError($e->getMessage());
             return $this->respJson([
                 'message' => 'Erro ao processar transmissão da NFe'
+            ], 500);
+        }
+    }
+
+    public function correctInvoice(Request $request, string $uuid){
+        $notaFiscal = $this->notaFiscalRepository->findBy('uuid', $uuid);
+
+        if(is_null($notaFiscal)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar NFe'
+            ], 422);
+        }
+
+        $data = $request->all();
+
+        $validate = $this->validate($data, [
+            'justificativa' => 'required|string'
+        ]);
+
+        if(is_null($validate)){
+            return $this->respJson([
+                'message' => 'Dados inválidos',
+                'errors' => $this->getErrors()
+            ], 422);
+        }
+
+        try{
+            $correcao = $this->nfeService->correct($notaFiscal->chave, $data['justificativa'], $notaFiscal->num_evento);
+
+            if(isset($correcao['erro'])){
+                return $this->respJson($correcao['erro'], 500);
+            }
+
+            $update = $this->notaFiscalRepository->update([
+                'xml_path' => $correcao['xml'],
+                'num_evento' => $correcao['seqEvent']
+            ], $notaFiscal->id);
+
+            if(is_null($update)){
+                return $this->respJson([
+                    'message' => 'Não foi possível atualizar nota fiscal'
+                ], 500);
+            }
+
+            return $this->respJson([
+                'message' => 'Carta de correção transmitida com sucesso'
+            ], 201);
+        }catch(\Exception $e){
+            LogService::logError($e->getMessage());
+            return $this->respJson([
+                'message' => 'Erro ao processar carta de correção da NFe'
+            ], 500);
+        }        
+    }
+
+    public function cancelInvoice(Request $request, string $uuid){
+        $notaFiscal = $this->notaFiscalRepository->findBy('uuid', $uuid);
+
+        if(is_null($notaFiscal)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar NFe'
+            ], 422);
+        }
+
+        $data = $request->all();
+
+        $validate = $this->validate($data, [
+            'justificativa' => 'required|string'
+        ]);
+
+        if(is_null($validate)){
+            return $this->respJson([
+                'message' => 'Dados inválidos',
+                'errors' => $this->getErrors()
+            ], 422);
+        }
+
+        try{
+            $cancelamento = $this->nfeService->cancel($notaFiscal->chave, $data['justificativa']);
+
+            if(isset($cancelamento['erro'])){
+                return $this->respJson($cancelamento['erro'], 500);
+            }
+
+            $update = $this->notaFiscalRepository->update([
+                'xml_path' => $cancelamento['xml']
+            ], $notaFiscal->id);
+
+            if(is_null($update)){
+                return $this->respJson([
+                    'message' => 'Não foi possível transmitir o cancelamento da nota fiscal'
+                ], 500);
+            }
+
+            return $this->respJson([
+                'message' => 'Cancelamento da NFe transmitido com sucesso'
+            ], 201);
+        }catch(\Exception $e){
+            LogService::logError($e->getMessage());
+            return $this->respJson([
+                'message' => 'Erro ao processar carta de cancelamento da NFe'
             ], 500);
         }
     }

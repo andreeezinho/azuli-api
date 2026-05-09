@@ -110,10 +110,12 @@ $router->create("POST", "/empresas", [$empresaController, 'store'], $auth);
 $router->create("PUT", "/empresas/{uuid}", [$empresaController, 'update'], $auth);
 $router->create("DELETE", "/empresas/{uuid}", [$empresaController, 'destroy'], $auth);
 
-$router->create("GET", "/nota-fiscal/teste", [$notaFiscalController, 'teste'], $auth);
+$router->create("GET", "/nota-fiscal/teste", [$notaFiscalController, 'teste'], null);
 $router->create("POST", "/nota-fiscal", [$notaFiscalController, 'generateNFe'], $auth);
 $router->create("POST", "/nota-fiscal/chave", [$notaFiscalController, 'getInvoiceByKey'], $auth);
 $router->create("POST", "/nota-fiscal/{uuid}", [$notaFiscalController, 'registerInvoiceProducts'], $auth);
+$router->create("PUT", "/nota-fiscal/{uuid}", [$notaFiscalController, 'correctInvoice'], $auth);
+$router->create("PUT", "/nota-fiscal/{uuid}/cancelar", [$notaFiscalController, 'cancelInvoice'], $auth);
 
 
 

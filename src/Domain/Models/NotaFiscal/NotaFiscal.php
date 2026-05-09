@@ -21,6 +21,7 @@ class NotaFiscal {
     public ?int $destinatarios_id;
     public float $total;
     public string $xml_path;
+    public int $num_evento;
     public string $situacao;
     public ?string $created_at;
     public ?string $updated_at;
