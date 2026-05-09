@@ -6,12 +6,13 @@ class TributacaoTransformer {
 
     public function transform(mixed $data) : array {
         return [
-            'uuid' => $data->uuid,
-            'codigo' => $data->codigo,
-            'tributacao' => $data->tributacao,
-            'ativo' => $data->ativo,
-            'created_at' => $data->created_at,
-            'updated_at' => $data->updated_at
+            'uuid' => $data->uuid ?? null,
+            'codigo' => $data->codigo ?? 0.00,
+            'tributacao' => $data->tributacao ?? 0.00,
+            'valor' => $data->valor ?? 0.00,
+            'ativo' => $data->ativo ?? null,
+            'created_at' => $data->created_at ?? null,
+            'updated_at' => $data->updated_at ?? null
         ];
     }
 

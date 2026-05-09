@@ -16,6 +16,7 @@ class Empresa {
     public string $razao_social;
     public ?string $nome_fantasia;
     public string $documento;
+    public ?string $telefone;
     public string $ie_rg;
     public int $num_serie_nfe;
     public int $enderecos_id;

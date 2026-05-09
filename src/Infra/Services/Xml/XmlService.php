@@ -6,15 +6,17 @@ use App\Infra\Services\Log\LogService;
 
 class XmlService {
 
-    public function saveXml(string $encodedFile){
+    public function saveXml(string $encodedFile, bool $encoded = true){
         try {
-            $decodeXml = base64_decode($encodedFile);
+            if($encoded){
+                $encodedFile = base64_decode($encodedFile);
 
-            $xmlNFe = gzdecode($decodeXml);
+                $encodedFile = gzdecode($encodedFile);
+            }
 
             $xmlHashedName = uniqid() . "_" . time() . '.xml';
 
-            file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xmlHashedName, $xmlNFe);
+            file_put_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xmlHashedName, $encodedFile);
 
             return $xmlHashedName;
         }catch (\Exception $e) {

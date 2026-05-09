@@ -18,7 +18,7 @@ class NotaFiscal {
     public int $num_nf;
     public string $nat_op;
     public int $vendas_id;
-    public int $destinatarios_id;
+    public ?int $destinatarios_id;
     public float $total;
     public string $xml_path;
     public string $situacao;
@@ -26,7 +26,7 @@ class NotaFiscal {
     public ?string $updated_at;
 
     public function destinatario(){
-        return $this->belongsTo(DestinatarioRepository::class, $this->destinatarios_id);
+        return $this->belongsTo(DestinatarioRepository::class, $this->destinatarios_id) ?? null;
     }
 
     public function venda(){

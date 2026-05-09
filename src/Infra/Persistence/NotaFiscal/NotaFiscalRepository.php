@@ -26,7 +26,7 @@ class NotaFiscalRepository extends BaseRepository implements NotaFiscalRepositor
         $result = $stmt->fetch();
 
         if(empty($result)){
-            return null;
+            return 0;
         }
 
         return $result->num_nf;

@@ -45,15 +45,15 @@ class Produto {
     }
 
     public function ipi(){
-        return $this->belongsTo(IpiRepository::class, $this->icms_id);
+        return $this->belongsTo(IpiRepository::class, $this->ipi_id);
     }
 
     public function pis(){
-        return $this->belongsTo(PisRepository::class, $this->icms_id);
+        return $this->belongsTo(PisRepository::class, $this->pis_id);
     }
 
     public function cofins(){
-        return $this->belongsTo(CofinsRepository::class, $this->icms_id);
+        return $this->belongsTo(CofinsRepository::class, $this->cofins_id);
     }
 
     public function create(array $data) : Produto {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\NotaFiscal;
 
 use App\Http\Controllers\Controller;
 use App\Http\Request\Request;
+use App\Http\Transformer\NotaFiscal\NotaFiscalTransformer;
 use App\Http\Transformer\NotaFiscal\NotaFiscalEntradaTransformer;
 use App\Domain\Repositories\NotaFiscal\NotaFiscalRepositoryInterface;
 use App\Domain\Repositories\NotaFiscal\NotaFiscalEntradaRepositoryInterface;
@@ -14,6 +15,7 @@ use App\Domain\Repositories\Produto\ProdutoRepositoryInterface;
 use App\Domain\Repositories\Destinatario\DestinatarioRepositoryInterface;
 use App\Domain\Repositories\Emitente\EmitenteRepositoryInterface;
 use App\Domain\Repositories\Endereco\EnderecoRepositoryInterface;
+use App\Infra\Services\Log\LogService;
 use App\Infra\Services\NFe\NFeService;
 use App\Infra\Services\Xml\XmlService;
 
@@ -31,6 +33,7 @@ class NotaFiscalController extends Controller {
     protected $nfeService;
     protected $xmlService;
     protected $notaFiscalTransformer;
+    protected $notaFiscalEntradaTransformer;
 
     public function __construct(
         NotaFiscalRepositoryInterface $notaFiscalRepository,
@@ -44,8 +47,10 @@ class NotaFiscalController extends Controller {
         EnderecoRepositoryInterface $enderecoRepository,
         NFeService $nfeService,
         XmlService $xmlService,
-        NotaFiscalEntradaTransformer $notaFiscalTransformer
+        NotaFiscalTransformer $notaFiscalTransformer,
+        NotaFiscalEntradaTransformer $notaFiscalEntradaTransformer,
     ){
+        parent::__construct();
         $this->notaFiscalRepository = $notaFiscalRepository;
         $this->notaFiscalEntradaRepository = $notaFiscalEntradaRepository;
         $this->empresaRepository = $empresaRepository;
@@ -58,6 +63,7 @@ class NotaFiscalController extends Controller {
         $this->nfeService = $nfeService;
         $this->xmlService = $xmlService;
         $this->notaFiscalTransformer = $notaFiscalTransformer;
+        $this->notaFiscalEntradaTransformer = $notaFiscalEntradaTransformer;
     }
 
     public function teste(Request $request){
@@ -85,7 +91,7 @@ class NotaFiscalController extends Controller {
         if(!is_null($findNfe)){
             return $this->respJson([
                 'message' => 'NFe encontrada',
-                'data' => $this->notaFiscalTransformer->transform($findNfe)  
+                'data' => $this->notaFiscalEntradaTransformer->transform($findNfe)  
             ], 200);
         }
 
@@ -104,6 +110,7 @@ class NotaFiscalController extends Controller {
                 'razao_social' => $nfe['nfeArray']['NFe']['infNFe']['emit']['xNome'],
                 'nome_fantasia' => $nfe['nfeArray']['NFe']['infNFe']['emit']['xFant'],
                 'documento' => $nfe['nfeArray']['NFe']['infNFe']['emit']['CNPJ'],
+                'telefone' => $nfe['nfeArray']['NFe']['infNFe']['emit']['enderEmit']['fone'],
                 'ie_rg' => $nfe['nfeArray']['NFe']['infNFe']['emit']['IE'],
                 'num_serie_nfe' => 1, 
                 'enderecos_id' => $this->enderecoRepository->create([
@@ -154,7 +161,7 @@ class NotaFiscalController extends Controller {
 
         return $this->respJson([
             'message' => 'NFe encontrada',
-            'data' => $this->notaFiscalTransformer->transform($create)
+            'data' => $this->notaFiscalEntradaTransformer->transform($create)
         ], 201);
     }
 
@@ -207,7 +214,9 @@ class NotaFiscalController extends Controller {
 
         $validate = $this->validate($data, [
             'venda_uuid' => 'required',
-            'nat_op' => 'required|string'
+            'nat_op' => 'required|string',
+            'pagamento' => 'required',
+            'frete' => 'required'
         ]);
 
         if(is_null($validate)){
@@ -227,18 +236,75 @@ class NotaFiscalController extends Controller {
 
         $produtos = $this->vendaProdutoRepository->findProductsInSale($venda->id);
 
-        $destinatario = $this->destinatarioRepository->findBy('uuid', $data['destinatario_uuid']);
+        $destinatario = isset($data['destinatario_uuid']) ? $this->destinatarioRepository->findBy('uuid', $data['destinatario_uuid']) : null;
 
         $data = array_merge($data, ['nNF' => $this->notaFiscalRepository->getLastNfeNumber() + 1]);
 
-        $generate = $this->nfeService
-            ->generateXml(
-                $data, 
-                $venda,
-                $destinatario,
-                $produtos,
-                is_null($destinatario) ? 65 : 55
-            );
+        try{
+            $generate = $this->nfeService
+                ->generateXml(
+                    $data, 
+                    $venda,
+                    $produtos,
+                    $destinatario,
+                    is_null($destinatario) ? 65 : 55
+                );
+                
+            if(is_null($generate)){
+                return $this->respJson([
+                    'message' => 'Não foi possível gerar XML autenticado' 
+                ], 500);
+            }
+
+            $transmit = $this->nfeService
+                ->transmit(
+                    $this->nfeService->sign($generate['xml'])
+                );
+
+            if(isset($transmit['erro'])){
+                return $this->respJson([
+                    'message' => $transmit['erro']
+                ], 500);
+            }
+
+            $xmlArr = $this->xmlService->convertXmltoArray($transmit['xml']);
+
+            $create = $this->notaFiscalRepository->create([
+                'nat_op' => $xmlArr['NFe']['infNFe']['ide']['natOp'],
+                'chave' => 
+                    str_starts_with($xmlArr['NFe']['infNFe']['@attributes']['Id'], 'NFe') ? 
+                    substr($xmlArr['NFe']['infNFe']['@attributes']['Id'], 3) 
+                    : $xmlArr['NFe']['infNFe']['@attributes']['Id'],
+                'num_nf' => $xmlArr['NFe']['infNFe']['ide']['nNF'],
+                'situacao' => $xmlArr['protNFe']['infProt']['xMotivo'],
+                'vendas_id' => $venda->id,
+                'destinatarios_id' => $destinatario->id ?? null,
+                'total' => $xmlArr['NFe']['infNFe']['total']['vNFTot'] ?? $venda->total, 
+                'xml_path' => $transmit['xml']
+            ]);
+
+            if(is_null($create)){
+                return $this->respJson([
+                    'message' => 'NFe transmitida, mas não salva no banco de dados',
+                    'data' => [
+                        'chaveNFe' => 
+                            str_starts_with($xmlArr['NFe']['infNFe']['@attributes']['Id'], 'NFe') ? 
+                            substr($xmlArr['NFe']['infNFe']['@attributes']['Id'], 3) 
+                            : $xmlArr['NFe']['infNFe']['@attributes']['Id'],
+                        ]   
+                ], 500);
+            }
+
+            return $this->respJson([
+                'message' => 'NFe Transmitida com sucesso',
+                'data' => $this->notaFiscalTransformer->transform($create)
+            ], 201);
+        }catch(\Exception $e){
+            LogService::logError($e->getMessage());
+            return $this->respJson([
+                'message' => 'Erro ao processar transmissão da NFe'
+            ], 500);
+        }
     }
 
 }
