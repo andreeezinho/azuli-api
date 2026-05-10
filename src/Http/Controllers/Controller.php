@@ -15,4 +15,8 @@ class Controller {
         Response::respJson($data, $status);
     }
 
+    public function respPdf(mixed $pdf, int $status = 200){
+        Response::respPdf($pdf, $status);
+    }
+
 }

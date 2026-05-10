@@ -18,6 +18,7 @@ use App\Domain\Repositories\Endereco\EnderecoRepositoryInterface;
 use App\Infra\Services\Log\LogService;
 use App\Infra\Services\NFe\NFeService;
 use App\Infra\Services\Xml\XmlService;
+use NFePHP\DA\NFe\Danfe;
 
 class NotaFiscalController extends Controller {
 
@@ -400,6 +401,45 @@ class NotaFiscalController extends Controller {
                 'message' => 'Erro ao processar carta de cancelamento da NFe'
             ], 500);
         }
+    }
+
+        public function teste(Request $request){
+        // return $this->respJson([
+        //     'data' => file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $data['xml'])
+        // ]);
+        error_reporting(E_ALL & ~E_DEPRECATED);
+        $danfe = new Danfe(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/69ff44a09c5b5_1778336928.xml'));
+        $pdf = $danfe->render();
+        header('Content-Type: application/pdf');
+        header('Content-Disposition: inline; filename="nota.pdf"');
+        echo $pdf;
+        exit;
+    }
+
+    public function printInvoice(Request $request){
+        $data = $request->all();
+
+        $validate = $this->validate($data, [
+            'xml' => 'required|string',
+            'tipo' => 'required|string'
+        ]);
+
+        if(is_null($validate)){
+            return $this->respJson([
+                'message' => 'Dados inválidos',
+                'errors' => $this->getErrors()
+            ], 422);
+        }
+
+        $generate = $this->nfeService->transformDanfeToPdf($data['xml'], $data['tipo']);
+
+        if(is_null($generate)){
+            return $this->respJson([
+                'message' => 'Não foi possível imprimir danfe'
+            ], 500);
+        }
+
+        return $this->respPdf($generate);
     }
 
 }

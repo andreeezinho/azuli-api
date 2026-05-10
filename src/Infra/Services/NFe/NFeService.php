@@ -10,6 +10,9 @@ use NFePHP\NFe\Common\Standardize;
 use NFePHP\NFe\Complements;
 use App\Infra\Services\Xml\XmlService;
 use App\Infra\Services\Log\LogService;
+use NFePHP\DA\NFe\Danfe;
+use NFePHP\DA\NFe\DanfeSimples;
+use NFePHP\DA\NFe\Danfce;
 
 class NFeService {
 
@@ -436,6 +439,29 @@ class NFeService {
         }catch(\Exception $e){
             LogService::logError('Erro ao gerar cancelamento da NFe: ' . $e->getMessage());
             return $e->getMessage();
+        }
+    }
+
+    public function transformDanfeToPdf(mixed $xml, string $type = 'danfe'){
+        error_reporting(E_ALL & ~E_DEPRECATED);
+
+        try{
+            switch($type){
+                case 'danfCe':
+                    $danfe = new Danfce(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xml));
+                case 'danfeSimples':
+                    $danfe = new DanfeSimples(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xml));
+                default:
+                    $danfe = new Danfe(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xml));
+            }
+
+            $pdf = $danfe->render();
+
+            return $pdf ?? null;
+
+        }catch(\Exception $e){
+            LogService::logError('Erro ao gerar cancelamento da NFe: ' . $e->getMessage());
+            return null;
         }
     }
 
