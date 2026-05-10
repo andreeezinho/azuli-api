@@ -403,19 +403,6 @@ class NotaFiscalController extends Controller {
         }
     }
 
-        public function teste(Request $request){
-        // return $this->respJson([
-        //     'data' => file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $data['xml'])
-        // ]);
-        error_reporting(E_ALL & ~E_DEPRECATED);
-        $danfe = new Danfe(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/69ff44a09c5b5_1778336928.xml'));
-        $pdf = $danfe->render();
-        header('Content-Type: application/pdf');
-        header('Content-Disposition: inline; filename="nota.pdf"');
-        echo $pdf;
-        exit;
-    }
-
     public function printInvoice(Request $request){
         $data = $request->all();
 
