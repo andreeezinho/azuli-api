@@ -16,6 +16,7 @@ use App\Http\Controllers\Cliente\ClienteController;
 use App\Http\Controllers\Pdv\PdvController;
 use App\Http\Controllers\Empresa\EmpresaController;
 use App\Http\Controllers\NotaFiscal\NotaFiscalController;
+use App\Http\Controllers\NotaFiscal\NotaFiscalEntradaController;
 
 $router = new Router();
 $auth = new Auth();
@@ -35,6 +36,7 @@ $clienteController = $container->get(ClienteController::class);
 $pdvController = $container->get(PdvController::class);
 $empresaController = $container->get(EmpresaController::class);
 $notaFiscalController = $container->get(NotaFiscalController::class);
+$notaFiscalEntradaController = $container->get(NotaFiscalEntradaController::class);
 
 // - Rotas
 
@@ -112,12 +114,12 @@ $router->create("DELETE", "/empresas/{uuid}", [$empresaController, 'destroy'], $
 
 //nota-fiscal
 $router->create("POST", "/nota-fiscal", [$notaFiscalController, 'generateNFe'], $auth);
-$router->create("POST", "/nota-fiscal/chave", [$notaFiscalController, 'getInvoiceByKey'], $auth);
 $router->create("POST", "/nota-fiscal/imprimir", [$notaFiscalController, 'printInvoice'], $auth);
-$router->create("POST", "/nota-fiscal/{uuid}", [$notaFiscalController, 'registerInvoiceProducts'], $auth);
 $router->create("PUT", "/nota-fiscal/{uuid}", [$notaFiscalController, 'correctInvoice'], $auth);
 $router->create("PUT", "/nota-fiscal/{uuid}/cancelar", [$notaFiscalController, 'cancelInvoice'], $auth);
 
-
+//nota-fiscal-entrada
+$router->create("POST", "/nota-fiscal/chave", [$notaFiscalEntradaController, 'getInvoiceByKey'], $auth);
+$router->create("POST", "/nota-fiscal/{uuid}", [$notaFiscalEntradaController, 'registerInvoiceProducts'], $auth);
 
 return $router;
