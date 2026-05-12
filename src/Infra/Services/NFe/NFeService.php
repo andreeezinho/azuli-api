@@ -32,7 +32,7 @@ class NFeService {
             "tokenIBPT": "",
             "CSC": "", 
             "CSCid": "" 
-        }', Certificate::readPfx(file_get_contents(__DIR__.'/../../../../'.$_ENV['CERTIFICATE']), "123456"));
+        }', Certificate::readPfx(file_get_contents(__DIR__.'/../../../../'.$_ENV['CERTIFICATE']), $_ENV['CERTIFICATE_PASSWORD']));
 
         $this->xmlService = new XmlService();
     }

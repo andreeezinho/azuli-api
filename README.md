@@ -63,22 +63,41 @@ git clone https://github.com/andreeezinho/sistema-pdv.git
 ### 3 - Inserir valores nas variáveis
 Insira os valores de acordo com o seus dados
 ```bash
-SITE_NAME='nome-api'
-API_URL='http://localhost:8888'
+SITE_NAME='' #nome do sistema
+API_URL='' #url da api 
 PERMITTED_HOST='*' #host permitido para utilizar a API, use * para liberar para todos (não recomendado) ou o ip correto do front-end (ex: http://localhost:5173)
 
-DB_HOST='local-database'
-DB_NAME='nome-database'
-DB_USER='user-database'
-DB_PASSWORD='senha-database'
+DB_HOST='' #host do banco de dados
+DB_NAME='' #nome do banco de dados
+DB_USER='' #usuario
+DB_PASSWORD='' #senha
 
-JWT_SECRET='senha-jwt' ## Senha para personalizar o token JWT
+JWT_SECRET='{sua_chave}-jwt-secret' #secret do JWT
 
-GOOGLE_CREDENTIALS= 'nome_dor_arquivo_credenciais.json' #nome do arquivo json das credenciais para autenticação com google
-GOOGLE_REDIRECT_URI='http://localhost:5173' #url para o redirecionamento após o login com o google
+#credenciais para funcoes da NFe
+CERTIFICATE='certificate.pfx' #arquivo do certificado digital na raiz do projeto
+CERTIFICATE_PASSWORD='' #senha do certificado digital
+AMBIENTE=2 #ambiente 1 = producao; 2 = homologacao
+RAZAO_SOCIAL=''
+NOME_FANTASIA=''
+CNPJ=''
+IE='' #IE RG da empresa (se tiver)
+UF=''
+CODIGO_UF=''
+CODIGO='' #codigo IBGE da cidade
+RUA=''
+NUMERO=''
+BAIRRO=''
+CIDADE=''
+TELEFONE=''
+CEP=''
 
-EMAIL = 'seuemail@gmail.com' 
-EMAIL_CODE = 'gfte esjt eqes qhmm'; ## Senha do SMTP que precisa cadastrar
+EMAIL='' #email do service de Emails
+EMAIL_CODE='' #codigo da API do Google para permitir envio de emails
+
+CONTACT_DOC='' #documento da empresa responsável técnica
+CONTACT_NUMBER='' #telefone da empresa responsável técnica
+CONTACT_EMAIL='' #email de contato da empresa responsável técnica
 ```
 
 ### 4 - Executar o script `db.sql` para o banco de dados
@@ -139,44 +158,3 @@ Todos os endpoints que são protegitos por autenticação necessitam de um token
         ]
     }
     ```
-
-## Autenticação com Google via OAuth2
-
-Antes de começar é necessário criar uma [credencial](https://support.google.com/workspacemigrate/answer/9222992?hl=PT) JSON, inserir na diretório do projeto e o nome em `.env` `GOOGLE_CREDENTIALS=''`
-
-Para autenticação via Google, existem dois endpoints que são necessários:
-
-1:
-
-**GET** `/google-link`
-
- - **Headers:** `""`
- - **Resposta:** 
-    ```bash
-    {
-        "message": "Sucesso ao gerar link",
-        "data": "https://link-do-google-auth"
-    }
-    ```
-Esse endpoint gera o link para a tela de login do google e redireciona para o endpoint definido em `.env` `GOOGLE_REDIRECT_URI=''`
-
-Ao redirecionar para o local desejado, ele insere um código como parâmetro na URI `http://localhost:5173?code=codigo_que_ira_aparecer`
-
-2:
-
-É necessário passar o código para esse endpoint como `code`
-
-**POST** `/google-auth`
-
- - **Headers:** `""`
- - **Resposta:** 
-    ```bash
-    {
-        "message": "Sucesso ao logar com o Google",
-        "data": {token}
-    }
-    ```
-
-O endpoint acessa a API do Google para verificar o código e retornar os dados do usuário.
-
-Se o usuário já estiver cadastro, ele gera o token JWT. Se não, ele cadastra o usuário no database e depois retorna o token.
