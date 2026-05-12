@@ -178,7 +178,7 @@ class NotaFiscalController extends Controller {
             }
 
             $update = $this->notaFiscalRepository->update([
-                'xml_path' => $correcao['xml'],
+                'xml_evento_path' => $correcao['xml'],
                 'num_evento' => $correcao['seqEvent']
             ], $notaFiscal->id);
 
@@ -229,7 +229,7 @@ class NotaFiscalController extends Controller {
             }
 
             $update = $this->notaFiscalRepository->update([
-                'xml_path' => $cancelamento['xml']
+                'xml_evento_path' => $cancelamento['xml']
             ], $notaFiscal->id);
 
             if(is_null($update)){
@@ -265,6 +265,35 @@ class NotaFiscalController extends Controller {
         }
 
         $generate = $this->nfeService->transformDanfeToPdf($data['xml'], $data['tipo']);
+
+        if(is_null($generate)){
+            return $this->respJson([
+                'message' => 'Não foi possível imprimir danfe'
+            ], 500);
+        }
+
+        return $this->respPdf($generate);
+    }
+
+    public function printDaEventoInvoice(Request $request, string $uuid){
+        $notaFiscal = $this->notaFiscalRepository->findBy('uuid', $uuid);
+
+        if(is_null($notaFiscal)){
+            return $this->respJson([
+                'message' => 'Não foi possível encontrar nota fiscal',
+            ], 422);
+        }
+
+        $generate = $this->nfeService->transformDaeventoToPdf($notaFiscal->xml_evento_path, [
+            'razao' => $_ENV['RAZAO_SOCIAL'],
+            'logradouro' => $_ENV['RUA'],
+            'numero' => $_ENV['NUMERO'],
+            'bairro' => $_ENV['BAIRRO'],
+            'CEP' => $_ENV['CEP'],
+            'municipio' => $_ENV['CIDADE'],
+            'UF' => $_ENV['UF'],
+            'telefone' => $_ENV['TELEFONE']
+        ]);
 
         if(is_null($generate)){
             return $this->respJson([

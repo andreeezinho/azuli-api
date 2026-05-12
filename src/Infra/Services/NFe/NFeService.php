@@ -13,6 +13,7 @@ use App\Infra\Services\Log\LogService;
 use NFePHP\DA\NFe\Danfe;
 use NFePHP\DA\NFe\DanfeSimples;
 use NFePHP\DA\NFe\Danfce;
+use NFePHP\DA\NFe\Daevento;
 
 class NFeService {
 
@@ -455,12 +456,27 @@ class NFeService {
                     $danfe = new Danfe(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xml));
             }
 
+            $danfe->logoParameters($_SERVER['DOCUMENT_ROOT'] . '/public/img/' . 'logo.png', 'F', true);
+
             $pdf = $danfe->render();
 
             return $pdf ?? null;
 
         }catch(\Exception $e){
-            LogService::logError('Erro ao gerar cancelamento da NFe: ' . $e->getMessage());
+            LogService::logError('Erro ao gerar Danfe da NFe: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    public function transformDaeventoToPdf(mixed $xml, array $emitente){
+        try{
+            $daevento = new Daevento(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/public/NFe/Xml/'. $xml), $emitente);
+
+            $pdf = $daevento->render();
+
+            return $pdf ?? null;
+        }catch(\Exception $e){
+            LogService::logError('Erro ao gerar Daevento da NFe: ' . $e->getMessage());
             return null;
         }
     }

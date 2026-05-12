@@ -42,8 +42,6 @@ $notaFiscalEntradaController = $container->get(NotaFiscalEntradaController::clas
 
 //autenticacao
 $router->create("POST", "/auth", [$authController, 'login'], null);
-$router->create("POST", "/google-auth", [$authController, 'loginWithGoogle'], null);
-$router->create("GET", "/google-link", [$authController, 'generateGoogleAuthLink'], null);
 $router->create("GET", "/me", [$authController, 'profile'], $auth);
 
 //usuarios
@@ -95,16 +93,16 @@ $router->create("PUT", "/clientes/{uuid}", [$clienteController, 'update'], $auth
 $router->create("DELETE", "/clientes/{uuid}", [$clienteController, 'destroy'], $auth);
 
 //PDV
-$router->create("GET", "/pdv", [$pdvController, 'index'], null);
-$router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], null);
-$router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], null);
-$router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], null);
-$router->create("DELETE", "/pdv/remove-all", [$pdvController, 'removeAllProductsInSale'], null);
-$router->create("GET", "/pdv/{uuid}/cliente", [$pdvController, 'getClientFromSale'], null);
-$router->create("POST", "/pdv/vincular-cliente", [$pdvController, 'bindClientOnSale'], null);
-$router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkClientFromSale'], null);
-$router->create("POST", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], null);
-$router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], null);
+$router->create("GET", "/pdv", [$pdvController, 'index'], $auth);
+$router->create("POST", "/pdv", [$pdvController, 'addProductInSale'], $auth);
+$router->create("PUT", "/pdv", [$pdvController, 'updateProductInSale'], $auth);
+$router->create("DELETE", "/pdv", [$pdvController, 'removeProductInSale'], $auth);
+$router->create("DELETE", "/pdv/remove-all", [$pdvController, 'removeAllProductsInSale'], $auth);
+$router->create("GET", "/pdv/{uuid}/cliente", [$pdvController, 'getClientFromSale'], $auth);
+$router->create("POST", "/pdv/vincular-cliente", [$pdvController, 'bindClientOnSale'], $auth);
+$router->create("DELETE", "/pdv/desvincular-cliente", [$pdvController, 'unlinkClientFromSale'], $auth);
+$router->create("POST", "/pdv/pagamento", [$pdvController, 'setPaymentMethod'], $auth);
+$router->create("PUT", "/pdv/finalizar", [$pdvController, 'finish'], $auth);
 
 //empresas
 $router->create("GET", "/empresas", [$empresaController, 'index'], $auth);
@@ -116,6 +114,7 @@ $router->create("DELETE", "/empresas/{uuid}", [$empresaController, 'destroy'], $
 $router->create("POST", "/nota-fiscal", [$notaFiscalController, 'generateNFe'], $auth);
 $router->create("POST", "/nota-fiscal/imprimir", [$notaFiscalController, 'printInvoice'], $auth);
 $router->create("PUT", "/nota-fiscal/{uuid}", [$notaFiscalController, 'correctInvoice'], $auth);
+$router->create("POST", "/nota-fiscal/{uuid}/imprimir", [$notaFiscalController, 'printDaEventoInvoice'], $auth);
 $router->create("PUT", "/nota-fiscal/{uuid}/cancelar", [$notaFiscalController, 'cancelInvoice'], $auth);
 
 //nota-fiscal-entrada
