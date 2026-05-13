@@ -389,8 +389,7 @@ class PdvController extends Controller {
             'message' => 'Venda finalizada'
         ], 201); 
         
-        ///TODO: DAR ENTRADA DE NFe DA VENDA FINALIZADA
-        ///TODO: GERAR COMPROVANTE PDF
+        ///TODO: EMITIR NFe DA VENDA FINALIZADA & GERAR COMPROVANTE (DANFce)
     }
 
     private function calculateTotal(string $uuid, float $discount){

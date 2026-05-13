@@ -43,7 +43,6 @@ app
 ## Funcionalidades 
 
 - Autenticação e Segurança via JWT
-- Autenticação com OAuth2 (Google API)
 - Rotas dinâmicas e personalizadas
 - Sistema de logs personalizáveis
 - Upload dinâmico de arquivos
@@ -102,7 +101,7 @@ CONTACT_EMAIL='' #email de contato da empresa responsável técnica
 
 ### 4 - Executar o script `db.sql` para o banco de dados
 ```bash
-mysql -u root -p api-db < db.sql
+mysql -u root -p {nome_do_banco_de_dados} < bd.sql
 ```
 
 O script vem com um usuário padrão com todas as permissões inicialmente:
