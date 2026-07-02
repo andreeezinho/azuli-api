@@ -95,6 +95,12 @@ trait CrudTrait {
                 continue;
             }
 
+            if (in_array($field, ['nome_codigo'])) {
+                $conditions[] = "nome LIKE :$field OR codigo LIKE :$field";
+                $params[":$field"] = "%$value%";
+                continue;
+            }
+
             $conditions[] = "$field = :$field";
             $params[":$field"] = $value;
         }
