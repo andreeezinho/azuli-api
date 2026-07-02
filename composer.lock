@@ -238,16 +238,16 @@
         },
         {
             "name": "nfephp-org/sped-common",
-            "version": "v5.1.16",
+            "version": "v5.1.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nfephp-org/sped-common.git",
-                "reference": "1c6b03dd06b396ee3680d07c9c071b82f869fd42"
+                "reference": "83c944a508635bc52575fe15198897b60a5679ac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nfephp-org/sped-common/zipball/1c6b03dd06b396ee3680d07c9c071b82f869fd42",
-                "reference": "1c6b03dd06b396ee3680d07c9c071b82f869fd42",
+                "url": "https://api.github.com/repos/nfephp-org/sped-common/zipball/83c944a508635bc52575fe15198897b60a5679ac",
+                "reference": "83c944a508635bc52575fe15198897b60a5679ac",
                 "shasum": ""
             },
             "require": {
@@ -310,25 +310,28 @@
             ],
             "support": {
                 "issues": "https://github.com/nfephp-org/sped-common/issues",
-                "source": "https://github.com/nfephp-org/sped-common/tree/v5.1.16"
+                "source": "https://github.com/nfephp-org/sped-common/tree/v5.1.17"
             },
-            "time": "2025-07-02T12:34:43+00:00"
+            "time": "2026-05-25T17:11:24+00:00"
         },
         {
             "name": "nfephp-org/sped-da",
-            "version": "v1.1.2",
+            "version": "v1.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nfephp-org/sped-da.git",
-                "reference": "2e4aa32c33da1f32705b10fb6104e30316b9209f"
+                "reference": "93ae550adcf5dd0c43598f27e323a8af84ceba22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nfephp-org/sped-da/zipball/2e4aa32c33da1f32705b10fb6104e30316b9209f",
-                "reference": "2e4aa32c33da1f32705b10fb6104e30316b9209f",
+                "url": "https://api.github.com/repos/nfephp-org/sped-da/zipball/93ae550adcf5dd0c43598f27e323a8af84ceba22",
+                "reference": "93ae550adcf5dd0c43598f27e323a8af84ceba22",
                 "shasum": ""
             },
             "require": {
+                "ext-dom": "*",
+                "ext-gd": "*",
+                "ext-mbstring": "*",
                 "nfephp-org/sped-common": "^5.1.0",
                 "php": ">= 7.4",
                 "tecnickcom/tc-lib-barcode": "^1"
@@ -384,9 +387,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nfephp-org/sped-da/issues",
-                "source": "https://github.com/nfephp-org/sped-da/tree/v1.1.2"
+                "source": "https://github.com/nfephp-org/sped-da/tree/v1.1.6"
             },
-            "time": "2022-08-31T19:13:11+00:00"
+            "time": "2024-05-07T19:32:22+00:00"
         },
         {
             "name": "nfephp-org/sped-gtin",
@@ -472,16 +475,16 @@
         },
         {
             "name": "nfephp-org/sped-nfe",
-            "version": "v5.2.5",
+            "version": "v5.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nfephp-org/sped-nfe.git",
-                "reference": "f49d543e735d30afacd92c3fe286c677a7d0ee35"
+                "reference": "b77e4fc93d24b64c83738130ce4ff74a3f57180d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nfephp-org/sped-nfe/zipball/f49d543e735d30afacd92c3fe286c677a7d0ee35",
-                "reference": "f49d543e735d30afacd92c3fe286c677a7d0ee35",
+                "url": "https://api.github.com/repos/nfephp-org/sped-nfe/zipball/b77e4fc93d24b64c83738130ce4ff74a3f57180d",
+                "reference": "b77e4fc93d24b64c83738130ce4ff74a3f57180d",
                 "shasum": ""
             },
             "require": {
@@ -548,22 +551,22 @@
             ],
             "support": {
                 "issues": "https://github.com/nfephp-org/sped-nfe/issues",
-                "source": "https://github.com/nfephp-org/sped-nfe/tree/v5.2.5"
+                "source": "https://github.com/nfephp-org/sped-nfe/tree/v5.2.6"
             },
-            "time": "2026-02-04T13:27:20+00:00"
+            "time": "2026-06-15T12:51:07+00:00"
         },
         {
             "name": "phpmailer/phpmailer",
-            "version": "v7.0.2",
+            "version": "v7.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHPMailer/PHPMailer.git",
-                "reference": "ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088"
+                "reference": "1bc1716a507a65e039d4ac9d9adebbbd0d346e15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088",
-                "reference": "ebf1655bd5b99b3f97e1a3ec0a69e5f4cd7ea088",
+                "url": "https://api.github.com/repos/PHPMailer/PHPMailer/zipball/1bc1716a507a65e039d4ac9d9adebbbd0d346e15",
+                "reference": "1bc1716a507a65e039d4ac9d9adebbbd0d346e15",
                 "shasum": ""
             },
             "require": {
@@ -624,7 +627,7 @@
             "description": "PHPMailer is a full-featured email creation and transfer class for PHP",
             "support": {
                 "issues": "https://github.com/PHPMailer/PHPMailer/issues",
-                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.0.2"
+                "source": "https://github.com/PHPMailer/PHPMailer/tree/v7.1.1"
             },
             "funding": [
                 {
@@ -632,7 +635,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-09T18:02:33+00:00"
+            "time": "2026-05-18T08:06:14+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -844,16 +847,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.37.0",
+            "version": "v1.38.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315"
+                "reference": "d3d318bad5e7a1bfbd026009c8bfb8d8f99ae6b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/6a21eb99c6973357967f6ce3708cd55a6bec6315",
-                "reference": "6a21eb99c6973357967f6ce3708cd55a6bec6315",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/d3d318bad5e7a1bfbd026009c8bfb8d8f99ae6b6",
+                "reference": "d3d318bad5e7a1bfbd026009c8bfb8d8f99ae6b6",
                 "shasum": ""
             },
             "require": {
@@ -905,7 +908,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.37.0"
+                "source": "https://github.com/symfony/polyfill-mbstring/tree/v1.38.2"
             },
             "funding": [
                 {
@@ -925,7 +928,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-04-10T17:25:58+00:00"
+            "time": "2026-05-27T06:59:30+00:00"
         },
         {
             "name": "symfony/polyfill-php80",
@@ -1263,5 +1266,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

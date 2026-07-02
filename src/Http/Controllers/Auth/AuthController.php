@@ -28,7 +28,7 @@ class AuthController extends Controller {
         $data = $request->all();
 
         $validate = $this->validate($data, [
-            'email' => 'required|email',
+            'usuario' => 'required|string',
             'senha' => 'required|string|min:8'
         ]);
 
@@ -40,13 +40,13 @@ class AuthController extends Controller {
         }
 
         $user = $this->userRepository->login(
-            $validate['email'], 
+            $validate['usuario'], 
             $validate['senha']
         );
 
         if(is_null($user)){
             return $this->respJson([
-                'message' => 'Email ou senha inválido'  
+                'message' => 'Usuário ou senha inválido'  
             ]);
         }
 
