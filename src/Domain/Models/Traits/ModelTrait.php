@@ -28,8 +28,8 @@ trait ModelTrait {
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
 
-    protected function belongsTo(string $class, int $key){
-        if(empty($key)){
+    protected function belongsTo(string $class, ?int $key){
+        if(is_null($key) || empty($key)){
             return null;
         }
 

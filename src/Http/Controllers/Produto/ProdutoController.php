@@ -112,31 +112,33 @@ class ProdutoController extends Controller {
 
         $data = $request->all();
 
-        $validate = $this->validate($data, [
-            'nome' => 'required|string|max:100',
-            'codigo' => 'required|max:13',
-            'preco' => 'required|float',
-            'estoque' => 'required|float',
-            'tipo' => 'required|string',
-            'quant_entrada' => 'required|float',
-            'quant_saida' => 'required|float',
-            'cfop' => 'required|int',
-            'ncm' => 'int',
-            'ativo' => 'max:1'
-        ]);
+        if($data['ativo']){
+            $validate = $this->validate($data, [
+                'nome' => 'required|string|max:100',
+                'codigo' => 'required|max:13',
+                'preco' => 'required|float',
+                'estoque' => 'required|float',
+                'tipo' => 'required|string',
+                'quant_entrada' => 'required|float',
+                'quant_saida' => 'required|float',
+                'cfop' => 'required|int',
+                'ncm' => 'int',
+                'ativo' => 'max:1'
+            ]);
 
-        if(is_null($validate)){
-            return $this->respJson([
-                'message' => 'Dados inválidos',
-                'errors' => $this->getErrors()
-            ], 422);
+            if(is_null($validate)){
+                return $this->respJson([
+                    'message' => 'Dados inválidos',
+                    'errors' => $this->getErrors()
+                ], 422);
+            }
+
+            $data['grupo_produto_id'] = $this->grupoProdutoRepository->findBy('uuid', $data['grupo_produto_id'])->id ?? 1;
+            $data['icms_id'] = $this->icmsRepository->findBy('uuid', $data['icms_id'])->id ?? null;
+            $data['ipi_id'] = $this->ipiRepository->findBy('uuid', $data['ipi_id'])->id ?? null;
+            $data['pis_id'] = $this->pisRepository->findBy('uuid', $data['pis_id'])->id ?? null;
+            $data['cofins_id'] = $this->cofinsRepository->findBy('uuid', $data['cofins_id'])->id ?? null;
         }
-
-        $data['grupo_produto_id'] = $this->grupoProdutoRepository->findBy('uuid', $data['grupo_produto_id'])->id ?? 1;
-        $data['icms_id'] = $this->icmsRepository->findBy('uuid', $data['icms_id'])->id ?? null;
-        $data['ipi_id'] = $this->ipiRepository->findBy('uuid', $data['ipi_id'])->id ?? null;
-        $data['pis_id'] = $this->pisRepository->findBy('uuid', $data['pis_id'])->id ?? null;
-        $data['cofins_id'] = $this->cofinsRepository->findBy('uuid', $data['cofins_id'])->id ?? null;
 
         $produto = $this->produtoRepository->update($data, $produto->id);
 
